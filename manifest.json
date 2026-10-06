@@ -1,0 +1,28 @@
+{
+  "short_name": "D Wallet",
+  "name": "D Wallet",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "background_color": "#ffffff",
+  "theme_color": "#076749",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "icons": [
+    {
+      "src": "public/assets/image/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "public/assets/image/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "เข้าสู่ระบบ D Wallet", "short_name": "D Wallet", "url": "./" }
+  ]
+}

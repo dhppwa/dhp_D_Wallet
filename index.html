@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>D Wallet</title>
+    
+    <meta name="description" content="ระบบรับสิทธิ์และคูปองดิจิทัล" />
+    <meta name="theme-color" content="#076749" />
+
+    <!-- PWA & Web App Manifest -->
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="public/assets/image/icon-192.png" type="image/png" />
+
+    <!-- iOS Safari Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="D Wallet" />
+    <link rel="apple-touch-icon" href="public/assets/image/icon-192.png" />
+
+    <!-- Google Fonts (Noto Sans Thai & Sarabun) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Sarabun:wght@400;700&display=swap" rel="stylesheet" />
+
+    <!-- CDN Preconnect & Stylesheets -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="stylesheet" href="styles.css?v=23" />
+  </head>
+  <body>
+    <main id="app" aria-live="polite"></main>
+    <div id="toast" role="status"></div>
+
+    <script>
+      // Prevent a blank page if a browser reports a startup error.
+      window.addEventListener('error', function (event) {
+        const target = document.getElementById('app');
+        if (target && !target.textContent.trim()) {
+          target.innerHTML = '<div style="padding:32px;font-family:system-ui;color:#14382d"><h2>ไม่สามารถเปิดแอปได้</h2><p>กรุณารีเฟรชหน้าอีกครั้ง</p><small>' + (event.message || 'Startup error') + '</small></div>';
+        }
+      });
+    </script>
+
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <!-- Application Scripts -->
+    <script src="config.js?v=8"></script>
+    <script src="d1-client.js?v=2"></script>
+    <script src="api.js?v=20"></script>
+    <script src="app.js?v=38"></script>
+
+    <!-- 📌 PWA Service Worker & Install Prompt Handler (ไว้ท้ายสุดจุดเดียว) -->
+    <script>
+      // 1. ลงทะเบียน Service Worker ทันที เพื่อให้ Chrome ตรวจสอบ PWA ได้ในหน้าแรก
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js', { scope: './' })
+          .then(async (reg) => {
+            await reg.update();
+            console.log('SW Registered:', reg.scope);
+          })
+          .catch((err) => console.error('SW Registration Failed:', err));
+      }
+
+      // เก็บเหตุการณ์ติดตั้งไว้ แล้วเรียกหน้าติดตั้งของ Chrome จากการแตะครั้งแรกบนหน้า Login
+      // เบราว์เซอร์ไม่อนุญาตให้บังคับเปิดกล่องติดตั้งเองทันทีโดยไม่มีการแตะของผู้ใช้
+      let deferredInstallPrompt = null;
+      window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        window.pwaInstallReady = true;
+        window.dispatchEvent(new Event('pwa-install-available'));
+      });
+
+      window.requestPwaInstall = async () => {
+        if (!deferredInstallPrompt || window.matchMedia('(display-mode: standalone)').matches) return;
+        try {
+          await deferredInstallPrompt.prompt();
+          await deferredInstallPrompt.userChoice;
+          return true;
+        } catch (err) {
+          console.warn('ไม่สามารถเปิดหน้าติดตั้ง PWA:', err);
+        } finally {
+          deferredInstallPrompt = null;
+        }
+      };
+
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      console.log('ติดตั้ง D Wallet สำเร็จ');
+      window.dispatchEvent(new Event('pwa-installed'));
+    });
+    </script>
+  </body>
+</html>

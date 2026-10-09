@@ -294,7 +294,7 @@ window.addEventListener('beforeunload', releaseUsageOnDisconnect);
 window.addEventListener('offline', releaseUsageOnDisconnect);
 
 function layout(content, back = false) {
-  app.innerHTML = `<section class="shell">
+  app.innerHTML = `<section class="shell ${currentView === 'change-password' ? 'first-password-shell' : ''}">
     <header class="topbar ${currentView === 'auth' ? 'topbar-login' : ''}" style="display: flex; justify-content: space-between; align-items: center;">
   <!-- ฝั่งซ้าย: ปุ่มย้อนกลับ (ถ้ามี) -->
   <div style="display: flex; align-items: center; gap: 0.75rem;">
@@ -339,6 +339,21 @@ function layout(content, back = false) {
   });
 }
 
+function setupPasswordVisibility(root = document) {
+  root.querySelectorAll('[data-password-toggle]').forEach(button => {
+    button.addEventListener('click', () => {
+      const input = button.closest('.password-input-wrap')?.querySelector('input');
+      if (!input) return;
+      const willShow = input.type === 'password';
+      input.type = willShow ? 'text' : 'password';
+      button.setAttribute('aria-pressed', String(willShow));
+      button.setAttribute('aria-label', willShow ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน');
+      button.title = willShow ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน';
+      button.innerHTML = willShow ? '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 4.2A10.8 10.8 0 0 1 12 4c5.5 0 9 5 9 8a9.7 9.7 0 0 1-2 3.6"/><path d="M6.6 6.6C4.4 8 3 10.2 3 12c0 3 3.5 8 9 8a10.5 10.5 0 0 0 3.4-.6"/></svg>' : '👁';
+    });
+  });
+}
+
 // --- หน้าเข้าสู่ระบบ ---
 function renderAuth() {
   currentView = 'auth';
@@ -349,11 +364,12 @@ function renderAuth() {
   layout(`<div class="auth-wrap"><div class="hero"><img src="public/assets/image/icon-192.png" alt="D Wallet" class="hero-logo" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 0.5rem; border-radius: 8px;"><div class="login-brand-name">D Wallet</div><h2>เข้าสู่ระบบเพื่อรับสิทธิ์</h2><p>กรอกเบอร์โทรศัพท์และรหัสผ่านเพื่อเข้าใช้งาน</p></div>
   <form class="card auth-card" id="auth-form">
     <label>เบอร์โทรศัพท์<input required name="phone" inputmode="tel" pattern="0[0-9]{8,9}" autocomplete="tel"></label>
-    <label>รหัสผ่าน<input required name="password" type="password" minlength="4" autocomplete="current-password"></label>
+    <label>รหัสผ่าน<div class="password-input-wrap"><input required name="password" type="password" minlength="4" autocomplete="current-password"><button class="password-toggle" data-password-toggle type="button" aria-label="แสดงรหัสผ่าน" title="แสดงรหัสผ่าน">👁</button></div></label>
     <button class="primary" type="submit">เข้าสู่ระบบ <span>→</span></button>
     <p class="forgot-password"><button id="forgot-password" type="button">ลืมรหัสผ่าน?</button></p>
   </form></div>`);
 
+  setupPasswordVisibility(document.querySelector('#auth-form'));
   document.querySelector('#forgot-password').onclick = renderForgotPassword;
   setTimeout(showInstallGuide, 400);
 
@@ -399,7 +415,8 @@ function renderForgotPassword() {
 
 function renderRecoveryPassword() {
   currentView = 'recovery-password';
-  layout(`<div class="auth-wrap"><div class="hero"><span class="hero-icon">✓</span><h2>ตั้งรหัสผ่านใหม่</h2><p>กรอกรหัสผ่านใหม่และยืนยันอีกครั้ง</p></div><form class="card auth-card" id="recovery-password-form"><label>รหัสผ่านใหม่<input required name="newPassword" type="password" minlength="4" autocomplete="new-password"></label><label>ยืนยันรหัสผ่านใหม่<input required name="confirmPassword" type="password" minlength="4" autocomplete="new-password"></label><button class="primary" type="submit">บันทึกรหัสผ่านใหม่ <span>→</span></button></form></div>`, true);
+  layout(`<div class="auth-wrap"><div class="hero"><span class="hero-icon">✓</span><h2>ตั้งรหัสผ่านใหม่</h2><p>กรอกรหัสผ่านใหม่และยืนยันอีกครั้ง</p></div><form class="card auth-card" id="recovery-password-form"><label>รหัสผ่านใหม่<div class="password-input-wrap"><input required name="newPassword" type="password" minlength="4" autocomplete="new-password"><button class="password-toggle" data-password-toggle type="button" aria-label="แสดงรหัสผ่าน" title="แสดงรหัสผ่าน">👁</button></div></label><label>ยืนยันรหัสผ่านใหม่<div class="password-input-wrap"><input required name="confirmPassword" type="password" minlength="4" autocomplete="new-password"><button class="password-toggle" data-password-toggle type="button" aria-label="แสดงรหัสผ่าน" title="แสดงรหัสผ่าน">👁</button></div></label><button class="primary" type="submit">บันทึกรหัสผ่านใหม่ <span>→</span></button></form></div>`, true);
+  setupPasswordVisibility(document.querySelector('#recovery-password-form'));
   document.querySelector('#recovery-password-form').onsubmit = async e => {
     e.preventDefault();
     const btn = e.submitter;
@@ -424,13 +441,14 @@ function renderForceChangePassword() {
         <p>เนื่องจากนี่เป็นการเข้าใช้งานครั้งแรก กรุณาตั้งรหัสผ่านใหม่เพื่อความปลอดภัย</p>
       </div>
       <form class="card auth-card" id="change-pwd-form">
-        <label>รหัสผ่านใหม่<input required name="newPassword" type="password" minlength="4"></label>
-        <label>ยืนยันรหัสผ่านใหม่<input required name="confirmPassword" type="password" minlength="4"></label>
+        <label>รหัสผ่านใหม่<div class="password-input-wrap"><input required name="newPassword" type="password" minlength="4" autocomplete="new-password"><button class="password-toggle" data-password-toggle type="button" aria-label="แสดงรหัสผ่าน" title="แสดงรหัสผ่าน">👁</button></div></label>
+        <label>ยืนยันรหัสผ่านใหม่<div class="password-input-wrap"><input required name="confirmPassword" type="password" minlength="4" autocomplete="new-password"><button class="password-toggle" data-password-toggle type="button" aria-label="แสดงรหัสผ่าน" title="แสดงรหัสผ่าน">👁</button></div></label>
         <button class="primary" type="submit">ยืนยันเปลี่ยนรหัสผ่าน <span>→</span></button>
       </form>
     </div>
   `, false);
 
+  setupPasswordVisibility(document.querySelector('#change-pwd-form'));
   document.querySelector('#change-pwd-form').onsubmit = async e => {
     e.preventDefault();
     const btn = e.submitter;
@@ -449,10 +467,8 @@ function renderForceChangePassword() {
     buttonLoading(btn, true);
     try {
       await api.changePassword({ phone: session.user.phone, newPassword });
-      session.user.isDefaultPassword = false;
-      saveSession(session);
-      showToast('เปลี่ยนรหัสผ่านสำเร็จ');
-      renderProducts();
+      await logoutUser();
+      showToast('เปลี่ยนรหัสผ่านสำเร็จ กรุณาเข้าสู่ระบบด้วยรหัสผ่านใหม่');
     } catch (err) {
       showToast(err.message);
       buttonLoading(btn, false);

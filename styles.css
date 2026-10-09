@@ -279,6 +279,37 @@ button {
   padding-top: 25px;
 }
 
+/* หน้าเปลี่ยนรหัสผ่านครั้งแรก: ใช้โทนม่วงให้แยกจากสีเขียวหลัก */
+.first-password-shell {
+  background: linear-gradient(160deg, #4c1d95 0%, #6d28d9 52%, #8b5cf6 100%);
+}
+
+.first-password-shell .hero-icon {
+  background: #f3e8ff;
+  color: #6b21a8;
+  box-shadow: 0 8px 24px rgba(46, 16, 101, .28);
+}
+
+.first-password-shell .auth-card {
+  border: 2px solid #c4b5fd;
+  background: #fdfaff;
+  box-shadow: 0 14px 34px rgba(46, 16, 101, .26);
+}
+
+.first-password-shell input:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, .18);
+}
+
+.first-password-shell .primary {
+  background: #7c3aed;
+}
+
+.first-password-shell .password-toggle {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
 .hero {
   text-align: center;
   padding: 5px 20px 28px;
@@ -333,6 +364,39 @@ button {
 .auth-card {
   display: grid;
   gap: 15px;
+}
+
+.password-input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-wrap input {
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 48px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 9px;
+  background: #eef6f1;
+  color: var(--green);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.password-toggle:focus-visible {
+  outline: 3px solid #0a704238;
 }
 
 /* Username/Password: เหลือระยะกันคีย์บอร์ดเพียงพอดี ไม่เลื่อนฟอร์มจนขาด */

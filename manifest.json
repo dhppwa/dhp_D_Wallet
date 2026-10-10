@@ -4,8 +4,8 @@
   "id": "./",
   "start_url": "./",
   "scope": "./",
-  "background_color": "#ffffff",
-  "theme_color": "#076749",
+  "background_color": "#435f52",
+  "theme_color": "#435f52",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
   "icons": [

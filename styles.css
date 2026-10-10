@@ -4,6 +4,8 @@
 html, body {
   width: 100%;
   max-width: 100%;
+  min-height: 100%;
+  background: #435f52;
   overflow-x: hidden;
   touch-action: manipulation;
   -webkit-text-size-adjust: 100%;

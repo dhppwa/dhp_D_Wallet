@@ -323,10 +323,6 @@ function layout(content, back = false) {
       if (currentView === 'coupon') await clearCouponData();
       currentCoupon = null;
       renderProducts();
-    } else if (currentView === 'forgot-password') {
-      renderAuth();
-    } else if (currentView === 'recovery-password') {
-      renderForgotPassword();
     }
   });
 
@@ -366,11 +362,9 @@ function renderAuth() {
     <label>เบอร์โทรศัพท์<input required name="phone" inputmode="tel" pattern="0[0-9]{8,9}" autocomplete="tel"></label>
     <label>รหัสผ่าน<div class="password-input-wrap"><input required name="password" type="password" minlength="4" autocomplete="current-password"><button class="password-toggle" data-password-toggle type="button" aria-label="แสดงรหัสผ่าน" title="แสดงรหัสผ่าน"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label>
     <button class="primary" type="submit">เข้าสู่ระบบ <span>→</span></button>
-    <p class="forgot-password"><button id="forgot-password" type="button">ลืมรหัสผ่าน?</button></p>
   </form></div>`);
 
   setupPasswordVisibility(document.querySelector('#auth-form'));
-  document.querySelector('#forgot-password').onclick = renderForgotPassword;
   setTimeout(showInstallGuide, 400);
 
   document.querySelector('#auth-form').onsubmit = async e => {
@@ -393,38 +387,6 @@ function renderAuth() {
       showToast(err.message); 
       buttonLoading(btn, false); 
     }
-  };
-}
-
-// --- กู้รหัสผ่าน ---
-function renderForgotPassword() {
-  currentView = 'forgot-password';
-  clearTimeout(inactivityTimer);
-  layout(`<div class="auth-wrap"><div class="hero"><span class="hero-icon">🔐</span><h2>ลืมรหัสผ่าน</h2><p>ยืนยันตัวตนด้วยเบอร์โทรศัพท์และรายละเอียด</p></div><form class="card auth-card" id="forgot-password-form"><label>เบอร์โทรศัพท์<input required name="phone" inputmode="tel" pattern="0[0-9]{8,9}" autocomplete="tel"></label><label>รายละเอียด<input required name="address" autocomplete="street-address"></label><button class="primary" type="submit">ยืนยันข้อมูล <span>→</span></button></form></div>`, true);
-  document.querySelector('#forgot-password-form').onsubmit = async e => {
-    e.preventDefault();
-    const btn = e.submitter;
-    buttonLoading(btn, true);
-    try {
-      const recovery = await api.verifyPasswordRecovery(Object.fromEntries(new FormData(e.currentTarget)));
-      saveSession(recovery);
-      renderRecoveryPassword();
-    } catch (err) { showToast(err.message); buttonLoading(btn, false); }
-  };
-}
-
-function renderRecoveryPassword() {
-  currentView = 'recovery-password';
-  layout(`<div class="auth-wrap"><div class="hero"><span class="hero-icon">✓</span><h2>ตั้งรหัสผ่านใหม่</h2><p>กรอกรหัสผ่านใหม่และยืนยันอีกครั้ง</p></div><form class="card auth-card" id="recovery-password-form"><label>รหัสผ่านใหม่<div class="password-input-wrap"><input required name="newPassword" type="password" minlength="4" autocomplete="new-password"><button class="password-toggle" data-password-toggle type="button" aria-label="แสดงรหัสผ่าน" title="แสดงรหัสผ่าน"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label><label>ยืนยันรหัสผ่านใหม่<div class="password-input-wrap"><input required name="confirmPassword" type="password" minlength="4" autocomplete="new-password"><button class="password-toggle" data-password-toggle type="button" aria-label="แสดงรหัสผ่าน" title="แสดงรหัสผ่าน"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label><button class="primary" type="submit">บันทึกรหัสผ่านใหม่ <span>→</span></button></form></div>`, true);
-  setupPasswordVisibility(document.querySelector('#recovery-password-form'));
-  document.querySelector('#recovery-password-form').onsubmit = async e => {
-    e.preventDefault();
-    const btn = e.submitter;
-    const { newPassword, confirmPassword } = Object.fromEntries(new FormData(e.currentTarget));
-    if (newPassword !== confirmPassword) return showToast('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน');
-    buttonLoading(btn, true);
-    try { await api.changePassword({ phone: session.user.phone, newPassword }); showToast('ตั้งรหัสผ่านใหม่สำเร็จ กรุณาเข้าสู่ระบบ'); await logoutUser(); }
-    catch (err) { showToast(err.message); buttonLoading(btn, false); }
   };
 }
 

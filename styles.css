@@ -890,21 +890,6 @@ input:focus {
   font-weight: 700;
 }
 
-.forgot-password {
-  text-align: center;
-  margin: 2px 0 0;
-}
-
-.forgot-password button {
-  background: none;
-  padding: 4px;
-  color: var(--green);
-  font-weight: 700;
-  font-size: 13px;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
 .loading {
   padding: 35px;
   text-align: center;

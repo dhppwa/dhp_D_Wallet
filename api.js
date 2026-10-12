@@ -276,18 +276,6 @@ async login({ phone, password }) {
     return { success: true };
   },
 
-  async verifyPasswordRecovery({ phone, address }) {
-    const supabase = getSupabase();
-    const cleanPhone = cleanString(phone);
-    const cleanAddress = cleanString(address);
-    if (!cleanPhone || !cleanAddress) throw new Error('กรุณากรอกเบอร์โทรศัพท์และรายละเอียดให้ครบถ้วน');
-    const { data, error } = await supabase.from('Cafe_Amazon_Promosion_House').select('*').eq('Phone_No', cleanPhone).eq('Detail', cleanAddress).maybeSingle();
-    if (error) throw new Error(`เกิดข้อผิดพลาดฐานข้อมูล: ${error.message}`);
-    if (!data) throw new Error('ไม่พบข้อมูลที่ตรงกับเบอร์โทรศัพท์และรายละเอียด');
-    const usedCount = data.All_Use ?? 0;
-    return { token: `sb-token-${data.ID}`, user: { id: data.ID, phone: data.Phone_No, Phone_No: data.Phone_No, name: data.Name || 'ลูกค้า Cafe Amazon', Name: data.Name || 'ลูกค้า Cafe Amazon', address: data.Detail || '-', Detail: data.Detail || '-', usedCount, All_Use: usedCount, All_Limit: data.All_Limit || 50, Day_Limit: data.Day_Limit || 1, isDefaultPassword: false } };
-  },
-
   // 2. รายการสินค้า
   async products(token) {
     return [

@@ -139,6 +139,13 @@ const removeVisibleProductCode = value => String(value ?? '')
   .replace(/รหัสสินค้า\s*[:：]?\s*[-\w.]+/gi, '')
   .trim();
 const esc = value => removeVisibleProductCode(value).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[c]));
+
+function getMemberLoginDisplay(member = {}) {
+  const loginType = Number(member.LoginType ?? member.loginType ?? 0);
+  if (loginType === 1) return { label: 'Username', value: member.Username || member.username || '-' };
+  if (loginType === 2) return { label: 'Email', value: member.Email || member.email || '-' };
+  return { label: 'เบอร์โทร', value: member.Phone_No || member.phone || '-' };
+}
 let appDialogTimer = null;
 function showAppDialog(message, {
   title = 'แจ้งเตือน',
@@ -533,6 +540,7 @@ async function renderHistory() {
   try {
     const user = session?.user || {};
     const userPhone = user.phone || user.Phone_No;
+    const loginDisplay = getMemberLoginDisplay(user);
     
     const [historyList, products] = await Promise.all([
       window.api.checkHistory(userPhone),
@@ -569,7 +577,7 @@ async function renderHistory() {
       : `<tr><td colspan="3" style="text-align: center; padding: 2rem; color: #6b7280;">ยังไม่มีประวัติการใช้สิทธิ์</td></tr>`;
 
     layout(`
-      <div class="page-title"><h2>ประวัติการใช้สิทธิ์</h2><span>เบอร์โทร: ${esc(userPhone)}</span></div>
+      <div class="page-title"><h2>ประวัติการใช้สิทธิ์</h2><span>${esc(loginDisplay.value)}</span></div>
       <div class="card" style="padding: 0.5rem; overflow-x: auto;">
         <table style="width: 100%; border-collapse: collapse;">
           <thead>
@@ -646,10 +654,17 @@ function renderCoupon() {
     productId: c.productId
   });
   if (window.QRCode) {
-    new QRCode(document.querySelector('#qrcode'), { 
+    const qrElement = document.querySelector('#qrcode');
+    const qrWrap = document.querySelector('.qr-wrap');
+    const availableWidth = Math.floor(qrWrap?.getBoundingClientRect().width || 302);
+    const qrSize = Math.min(260, Math.max(120, availableWidth - 42));
+    qrElement.style.setProperty('--qr-size', `${qrSize}px`);
+    qrElement.style.width = `${qrSize + 18}px`;
+    qrElement.style.height = `${qrSize + 18}px`;
+    new QRCode(qrElement, {
       text: payload, 
-      width: 260, 
-      height: 260, 
+      width: qrSize,
+      height: qrSize,
       colorDark: '#102b23', 
       colorLight: '#ffffff' 
     });

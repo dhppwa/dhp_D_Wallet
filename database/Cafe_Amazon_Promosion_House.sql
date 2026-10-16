@@ -26,6 +26,9 @@ CREATE TABLE IF NOT EXISTS `Cafe_Amazon_Promosion_House` (
   `Coupon_No` VARCHAR(50) NULL DEFAULT NULL,
   `Product_ID` VARCHAR(13) NULL DEFAULT NULL,
   `Access_Level` INT NOT NULL DEFAULT 0,
+  `Username` VARCHAR(255) NULL DEFAULT NULL,
+  `LoginType` INT NOT NULL DEFAULT 0,
+  `Email` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `UX_CafeAmazonHouse_Phone` (`Phone_No`),
   INDEX `IX_CafeAmazonHouse_Detail` (`Detail`)
@@ -67,6 +70,9 @@ CREATE TABLE "Cafe_Amazon_Promosion_House" (
     "Coupon_No" VARCHAR(50) DEFAULT NULL,
     "Product_ID" VARCHAR(13) DEFAULT NULL,
     "Access_Level" INT DEFAULT 0,
+    "Username" VARCHAR(255) DEFAULT NULL,
+    "LoginType" INT NOT NULL DEFAULT 0,
+    "Email" VARCHAR(255) DEFAULT NULL,
     CONSTRAINT "UX_CafeAmazonHouse_Phone" UNIQUE ("Phone_No")
 );
 
@@ -118,6 +124,9 @@ CREATE TABLE `Cafe_Amazon_Promosion_House` (
   `Confirm_Coupon` TINYINT(1) NOT NULL DEFAULT 0,
   `Coupon_No` VARCHAR(50) NULL DEFAULT NULL,
   `Product_ID` VARCHAR(13) NULL DEFAULT NULL,
+  `Username` VARCHAR(255) NULL DEFAULT NULL,
+  `LoginType` INT NOT NULL DEFAULT 0,
+  `Email` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `UX_CafeAmazonHouse_Phone` (`Phone_No`),
   INDEX `idx_coupon_no` (`Coupon_No`)

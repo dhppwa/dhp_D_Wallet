@@ -110,26 +110,37 @@ window.api = {
 
   // 1. เข้าสู่ระบบ (เช็ก PassWord)
   // ใน api.js ตรงฟังก์ชัน login
-async login({ phone, password }) {
+async login({ loginId, phone, password }) {
   const supabase = getSupabase();
-  const cleanPhone = cleanString(phone);
+  const identifier = cleanString(loginId ?? phone);
+  if (!identifier) throw new Error('กรุณากรอก Username เบอร์โทรศัพท์ หรือ Email');
 
-  // หากปิด/ออฟไลน์ครั้งก่อนจนคืนสถานะไม่สำเร็จ ให้คืนค่าเดิมก่อนตรวจเข้าสู่ระบบใหม่
+  const loginLookups = [
+    { column: 'Phone_No', value: identifier, loginType: 0 },
+    { column: 'Username', value: identifier, loginType: 1 },
+    { column: 'Email', value: identifier.toLowerCase(), loginType: 2 }
+  ];
+  const results = await Promise.all(loginLookups.map(item => supabase
+    .from('Cafe_Amazon_Promosion_House')
+    .select('*')
+    .eq(item.column, item.value)
+    .eq('LoginType', item.loginType)
+    .maybeSingle()));
+  const failedResult = results.find(result => result.error);
+  if (failedResult) throw new Error(`เกิดข้อผิดพลาดฐานข้อมูล: ${failedResult.error.message}`);
+  const matches = results.map(result => result.data).filter(Boolean);
+  if (matches.length > 1) throw new Error('พบข้อมูลเข้าสู่ระบบซ้ำ กรุณาติดต่อผู้ดูแลระบบ');
+  const data = matches[0];
+  if (!data) throw new Error('ไม่พบข้อมูลผู้ใช้งาน หรือประเภทการเข้าสู่ระบบไม่ถูกต้อง');
+  const cleanPhone = cleanString(data.Phone_No);
+
+  // หากปิด/ออฟไลน์ครั้งก่อนจนคืนสถานะไม่สำเร็จ ให้คืนค่าจากเบอร์อ้างอิงของบัญชี
   if (localStorage.getItem(PENDING_USAGE_RELEASE_KEY) === cleanPhone) {
     await supabase.from('Cafe_Amazon_Promosion_House')
       .update({ IsUse: false, UpdateDate: new Date().toISOString() })
       .eq('Phone_No', cleanPhone);
     clearQueuedUsageRelease(cleanPhone);
   }
-
-  const { data, error } = await supabase
-    .from('Cafe_Amazon_Promosion_House')
-    .select('*')
-    .eq('Phone_No', cleanPhone)
-    .maybeSingle();
-
-  if (error) throw new Error(`เกิดข้อผิดพลาดฐานข้อมูล: ${error.message}`);
-  if (!data) throw new Error('ไม่พบข้อมูลเบอร์โทรศัพท์นี้ในระบบ');
   
   // แปลงค่ารหัสผ่านใน DB เป็น String เพื่อป้องกันปัญหา Type mismatch
   const dbPassword = String(data.PassWord ?? '').trim();
@@ -175,6 +186,9 @@ async login({ phone, password }) {
     All_Use: usedCount,
     All_Limit: data.All_Limit || 50,
     Day_Limit: data.Day_Limit || 1,
+    Username: data.Username || '',
+    Email: data.Email || '',
+    LoginType: Number(data.LoginType ?? 0),
     isDefaultPassword: isDefaultPassword // ส่งค่านี้ไปยัง app.js
   };
 

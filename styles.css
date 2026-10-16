@@ -762,6 +762,9 @@ input:focus {
 }
 
 .coupon {
+  height: auto !important;
+  min-height: 0 !important;
+  align-self: start;
   border-radius: 21px;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -796,6 +799,8 @@ input:focus {
 }
 
 .qr-wrap {
+  height: auto !important;
+  min-height: 0 !important;
   padding: 22px 12px 13px;
   display: flex;
   justify-content: center;
@@ -804,8 +809,7 @@ input:focus {
 }
 
 .qr-wrap #qrcode {
-  width: min(278px, 100%);
-  aspect-ratio: 1 / 1;
+  flex: 0 0 auto;
   box-sizing: border-box;
   padding: 8px;
   border: 1px solid var(--line);
@@ -822,10 +826,10 @@ input:focus {
 .qr-wrap #qrcode canvas,
 .qr-wrap #qrcode img {
   display: block;
-  width: 100% !important;
-  max-width: 260px;
-  height: auto !important;
-  aspect-ratio: 1 / 1;
+  width: var(--qr-size, 260px) !important;
+  max-width: none;
+  height: var(--qr-size, 260px) !important;
+  max-height: none;
   object-fit: contain;
 }
 

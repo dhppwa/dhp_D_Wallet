@@ -796,19 +796,37 @@ input:focus {
 }
 
 .qr-wrap {
-  padding: 22px 0 13px;
+  padding: 22px 12px 13px;
   display: flex;
   justify-content: center;
+  align-items: center;
   background: #fff;
 }
 
 .qr-wrap #qrcode {
+  width: min(278px, 100%);
+  aspect-ratio: 1 / 1;
+  box-sizing: border-box;
   padding: 8px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  line-height: 220px;
-  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  font-size: 0;
   text-align: center;
+  overflow: hidden;
+}
+
+.qr-wrap #qrcode canvas,
+.qr-wrap #qrcode img {
+  display: block;
+  width: 100% !important;
+  max-width: 260px;
+  height: auto !important;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
 }
 
 .coupon-id {

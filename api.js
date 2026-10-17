@@ -157,13 +157,24 @@ window.api = {
   async isCouponConfirmed(phone, couponNo) {
     const cleanPhone = cleanString(phone) || getCurrentUserPhone();
     if (!cleanPhone || !couponNo) return false;
-    const { data, error } = await getSupabase()
+    // หลัง Staff ยืนยัน ระบบจะสร้างบิลแล้วล้าง Coupon_No ในตารางสมาชิก
+    // จึงต้องตรวจจากบิลแทนการเทียบ Coupon_No ที่ถูกล้างไปแล้ว
+    const { data: bills, error: billError } = await getSupabase()
+      .from('Cafe_Amazon_Bill')
+      .select('ID')
+      .eq('Coupon_No', String(couponNo))
+      .limit(1);
+    if (billError) return false;
+    if (bills && bills.length > 0) return true;
+
+    // สำรองกรณี Worker รุ่นเก่ายังไม่ล้าง Coupon_No หลังยืนยัน
+    const { data: member, error: memberError } = await getSupabase()
       .from('Cafe_Amazon_Promosion_House')
       .select('Confirm_Coupon, Coupon_No')
       .eq('Phone_No', cleanPhone)
       .maybeSingle();
-    if (error || !data) return false;
-    return Boolean(data.Confirm_Coupon) && String(data.Coupon_No || '') === String(couponNo);
+    if (memberError || !member) return false;
+    return Boolean(member.Confirm_Coupon) && String(member.Coupon_No || '') === String(couponNo);
   },
 
   // 1. เข้าสู่ระบบ (เช็ก PassWord)

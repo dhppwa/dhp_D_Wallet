@@ -21,6 +21,8 @@ const app = document.querySelector('#app');
 const toast = document.querySelector('#toast');
 const SESSION_KEY = 'benefit-session';
 const SAVED_LOGIN_KEY = 'benefit-saved-login';
+const FIRST_LOGIN_ID_KEY = 'benefit-first-login-id';
+const REMEMBER_LOGIN_ENABLED_KEY = 'benefit-remember-login-enabled';
 let session = JSON.parse(localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY) || 'null');
 let currentCoupon = null;
 let couponTimer = null;
@@ -345,11 +347,12 @@ function renderAuth() {
   cleanupSubscriptions();
 
   const savedLogin = getSavedLogin();
+  const rememberLoginEnabled = Boolean(savedLogin) || localStorage.getItem(REMEMBER_LOGIN_ENABLED_KEY) === '1';
   layout(`<div class="auth-wrap"><div class="hero"><img src="public/assets/image/icon-192.png" alt="D Wallet" class="hero-logo" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 0.5rem; border-radius: 8px;"><div class="login-brand-name">D Wallet</div><h2>เข้าสู่ระบบเพื่อรับสิทธิ์</h2></div>
   <form class="card auth-card" id="auth-form">
     <label>User (Username / เบอร์โทรศัพท์ / Email)<input required name="loginId" type="text" autocomplete="username" value="${esc(savedLogin?.loginId || '')}"></label>
     <label>รหัสผ่าน<div class="password-input-wrap"><input required name="password" type="password" minlength="4" autocomplete="current-password" value="${esc(savedLogin?.password || '')}"><button class="password-toggle" data-password-toggle type="button" aria-label="แสดงรหัสผ่าน" title="แสดงรหัสผ่าน"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label>
-    <label style="display:flex; flex-direction:row; align-items:center; gap:9px; cursor:pointer; font-weight:600;"><input name="rememberLogin" type="checkbox" value="1" ${savedLogin ? 'checked' : ''} style="width:18px; height:18px; margin:0;"> จำรหัส / เข้าใช้งานอัตโนมัติ</label>
+    <label style="display:flex; flex-direction:row; align-items:center; gap:9px; cursor:pointer; font-weight:600;"><input name="rememberLogin" type="checkbox" value="1" ${rememberLoginEnabled ? 'checked' : ''} style="width:18px; height:18px; margin:0;"> จำรหัส / เข้าใช้งานอัตโนมัติ</label>
     <button class="primary" type="submit">เข้าสู่ระบบ <span>→</span></button>
   </form></div>`);
 
@@ -365,13 +368,21 @@ function renderAuth() {
     try { 
       const loginRes = await api.login(values);
       const rememberLogin = values.rememberLogin === '1';
-      if (rememberLogin) saveLoginCredentials(values.loginId, values.password);
-      else localStorage.removeItem(SAVED_LOGIN_KEY);
+      if (rememberLogin) {
+        saveLoginCredentials(values.loginId, values.password);
+        localStorage.setItem(REMEMBER_LOGIN_ENABLED_KEY, '1');
+      } else {
+        localStorage.removeItem(SAVED_LOGIN_KEY);
+        localStorage.removeItem(REMEMBER_LOGIN_ENABLED_KEY);
+      }
       saveSession(loginRes, rememberLogin);
 
       if (loginRes.user?.isDefaultPassword) {
+        // เก็บ User ชั่วคราวไว้จนเปลี่ยนรหัสครั้งแรกสำเร็จ แม้ผู้ใช้ยังไม่ได้ติ๊กจำรหัส
+        sessionStorage.setItem(FIRST_LOGIN_ID_KEY, String(values.loginId || ''));
         renderForceChangePassword();
       } else {
+        sessionStorage.removeItem(FIRST_LOGIN_ID_KEY);
         renderProducts();
       }
     }
@@ -422,7 +433,18 @@ function renderForceChangePassword() {
     try {
       await api.changePassword({ phone: session.user.phone, newPassword });
       const savedLogin = getSavedLogin();
-      if (savedLogin) saveLoginCredentials(savedLogin.loginId, newPassword);
+      const firstLoginId = sessionStorage.getItem(FIRST_LOGIN_ID_KEY);
+      const loginType = Number(session.user?.LoginType ?? 0);
+      const fallbackLoginId = loginType === 1
+        ? session.user?.Username
+        : loginType === 2
+          ? session.user?.Email
+          : session.user?.phone || session.user?.Phone_No;
+      const loginId = savedLogin?.loginId || firstLoginId || fallbackLoginId;
+      if (loginId) saveLoginCredentials(loginId, newPassword);
+      // หลังเปลี่ยนรหัสครั้งแรก ให้หน้า Login เปิดจำรหัสและติ๊กช่องนี้เสมอ
+      localStorage.setItem(REMEMBER_LOGIN_ENABLED_KEY, '1');
+      sessionStorage.removeItem(FIRST_LOGIN_ID_KEY);
       await logoutUser();
       showToast('เปลี่ยนรหัสผ่านสำเร็จ กรุณาเข้าสู่ระบบด้วยรหัสผ่านใหม่');
     } catch (err) {

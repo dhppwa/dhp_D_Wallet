@@ -1,5 +1,5 @@
 (function () {
-  const BOOLEAN_FIELDS = new Set(['IsUse', 'Confirm_Coupon']);
+  const BOOLEAN_FIELDS = new Set(['IsUse', 'Confirm_Coupon', 'LimitAll']);
   const normalize = row => {
     if (!row || typeof row !== 'object') return row;
     for (const field of BOOLEAN_FIELDS) if (field in row) row[field] = Boolean(row[field]);

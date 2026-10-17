@@ -19,7 +19,9 @@ document.addEventListener('touchstart', function (e) {
 const getApi = () => window.api;
 const app = document.querySelector('#app');
 const toast = document.querySelector('#toast');
-let session = JSON.parse(sessionStorage.getItem('benefit-session') || 'null');
+const SESSION_KEY = 'benefit-session';
+const SAVED_LOGIN_KEY = 'benefit-saved-login';
+let session = JSON.parse(localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY) || 'null');
 let currentCoupon = null;
 let couponTimer = null;
 let couponChannel = null;
@@ -52,11 +54,8 @@ async function clearCouponData(phone) {
   }
 }
 
-let inactivityTimer = null;
-const INACTIVITY_LIMIT = 15 * 60 * 1000;
-const LAST_ACTIVITY_KEY = 'benefit-last-activity-at';
-let lastActivityAt = Number(sessionStorage.getItem(LAST_ACTIVITY_KEY)) || Date.now();
-let inactivityLogoutInProgress = false;
+// ไม่มีการออกจากระบบอัตโนมัติตามเวลา ผู้ใช้จะอยู่ในระบบจนกดออกจากระบบเอง
+const resetInactivityTimer = () => {};
 
 function cleanupSubscriptions() {
   if (couponChannel && window.supabaseClient) {
@@ -65,30 +64,7 @@ function cleanupSubscriptions() {
   }
 }
 
-async function checkInactivityTimeout() {
-  clearTimeout(inactivityTimer);
-  if (!session || inactivityLogoutInProgress) return;
-
-  const remaining = INACTIVITY_LIMIT - (Date.now() - lastActivityAt);
-  if (remaining > 0) {
-    inactivityTimer = setTimeout(checkInactivityTimeout, remaining);
-    return;
-  }
-
-  inactivityLogoutInProgress = true;
-  await logoutUser({ reason: 'inactivity' });
-  inactivityLogoutInProgress = false;
-}
-
-function resetInactivityTimer() {
-  if (!session) return;
-  lastActivityAt = Date.now();
-  sessionStorage.setItem(LAST_ACTIVITY_KEY, String(lastActivityAt));
-  checkInactivityTimeout();
-}
-
-async function logoutUser({ reason = 'manual' } = {}) {
-  clearTimeout(inactivityTimer);
+async function logoutUser() {
   clearInterval(couponTimer);
   cleanupSubscriptions();
   if (session?.user) await clearCouponData();
@@ -100,30 +76,20 @@ async function logoutUser({ reason = 'manual' } = {}) {
       console.error('ไม่สามารถคืนสถานะ IsUse:', err);
     }
   }
-  sessionStorage.clear();
+  sessionStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem(SESSION_KEY);
   session = null;
   currentCoupon = null;
   renderAuth();
-  if (reason === 'inactivity') {
-    showAppDialog('ไม่มีการใช้งานต่อเนื่องเป็นเวลา 15 นาที ระบบได้ออกจากระบบและคืนสถานะผู้ใช้งานแล้ว', {
-      title: 'หมดเวลาการใช้งาน'
-    });
-  }
 }
 
-['click', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
-  window.addEventListener(event, resetInactivityTimer, { passive: true });
-});
-
-// ตอนแอปถูกซ่อนอาจตามด้วยการปัดทิ้ง จึงคืน IsUse ไว้ก่อนด้วยคำขอแบบ keepalive
-// หากเป็นเพียงการสลับแอป เมื่อกลับมาและ Session ยังไม่หมดอายุ จะตั้ง IsUse กลับเป็น true
+// การสลับแท็บหรือพักแอปชั่วคราวต้องยังถือว่า Login อยู่
+// คืน IsUse เฉพาะ logout, offline, pagehide หรือ beforeunload เท่านั้น
 document.addEventListener('visibilitychange', async () => {
   if (document.visibilityState === 'hidden') {
-    releaseUsageOnDisconnect();
     return;
   }
 
-  await checkInactivityTimeout();
   const phone = session?.user?.phone || session?.user?.Phone_No;
   if (!phone || !window.api?.restoreUserUsage) return;
   try {
@@ -132,7 +98,6 @@ document.addEventListener('visibilitychange', async () => {
     console.warn('ไม่สามารถคืนสถานะ IsUse เมื่อกลับเข้าแอป:', error);
   }
 });
-window.addEventListener('focus', checkInactivityTimeout);
 
 const removeVisibleProductCode = value => String(value ?? '')
   .replace(/สินค้า\s*รหัส\s*[-\w.]+/gi, '')
@@ -215,10 +180,26 @@ window.addEventListener('online', async () => {
     console.warn('ไม่สามารถคืนสถานะ IsUse หลังเชื่อมต่อ Internet:', error);
   }
 });
-const saveSession = value => {
+const saveSession = (value, remember = localStorage.getItem(SESSION_KEY) !== null) => {
   session = value;
-  sessionStorage.setItem('benefit-session', JSON.stringify(value));
-  resetInactivityTimer();
+  if (remember) {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(value));
+    sessionStorage.removeItem(SESSION_KEY);
+  } else {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(value));
+    localStorage.removeItem(SESSION_KEY);
+  }
+};
+const getSavedLogin = () => {
+  try {
+    const value = JSON.parse(localStorage.getItem(SAVED_LOGIN_KEY) || 'null');
+    return value?.loginId && value?.password ? value : null;
+  } catch (error) {
+    return null;
+  }
+};
+const saveLoginCredentials = (loginId, password) => {
+  localStorage.setItem(SAVED_LOGIN_KEY, JSON.stringify({ loginId: String(loginId || ''), password: String(password || '') }));
 };
 const buttonLoading = (button, on) => { button.disabled = on; button.dataset.label ||= button.innerHTML; button.innerHTML = on ? '<span class="spinner"></span> กรุณารอสักครู่' : button.dataset.label; };
 
@@ -362,12 +343,13 @@ function renderAuth() {
   currentView = 'auth';
   clearInterval(couponTimer);
   cleanupSubscriptions();
-  clearTimeout(inactivityTimer);
 
+  const savedLogin = getSavedLogin();
   layout(`<div class="auth-wrap"><div class="hero"><img src="public/assets/image/icon-192.png" alt="D Wallet" class="hero-logo" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 0.5rem; border-radius: 8px;"><div class="login-brand-name">D Wallet</div><h2>เข้าสู่ระบบเพื่อรับสิทธิ์</h2></div>
   <form class="card auth-card" id="auth-form">
-    <label>User (Username / เบอร์โทรศัพท์ / Email)<input required name="loginId" type="text" autocomplete="username"></label>
-    <label>รหัสผ่าน<div class="password-input-wrap"><input required name="password" type="password" minlength="4" autocomplete="current-password"><button class="password-toggle" data-password-toggle type="button" aria-label="แสดงรหัสผ่าน" title="แสดงรหัสผ่าน"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label>
+    <label>User (Username / เบอร์โทรศัพท์ / Email)<input required name="loginId" type="text" autocomplete="username" value="${esc(savedLogin?.loginId || '')}"></label>
+    <label>รหัสผ่าน<div class="password-input-wrap"><input required name="password" type="password" minlength="4" autocomplete="current-password" value="${esc(savedLogin?.password || '')}"><button class="password-toggle" data-password-toggle type="button" aria-label="แสดงรหัสผ่าน" title="แสดงรหัสผ่าน"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label>
+    <label style="display:flex; flex-direction:row; align-items:center; gap:9px; cursor:pointer; font-weight:600;"><input name="rememberLogin" type="checkbox" value="1" ${savedLogin ? 'checked' : ''} style="width:18px; height:18px; margin:0;"> จำรหัส / เข้าใช้งานอัตโนมัติ</label>
     <button class="primary" type="submit">เข้าสู่ระบบ <span>→</span></button>
   </form></div>`);
 
@@ -382,7 +364,10 @@ function renderAuth() {
     buttonLoading(btn, true);
     try { 
       const loginRes = await api.login(values);
-      saveSession(loginRes);
+      const rememberLogin = values.rememberLogin === '1';
+      if (rememberLogin) saveLoginCredentials(values.loginId, values.password);
+      else localStorage.removeItem(SAVED_LOGIN_KEY);
+      saveSession(loginRes, rememberLogin);
 
       if (loginRes.user?.isDefaultPassword) {
         renderForceChangePassword();
@@ -436,6 +421,8 @@ function renderForceChangePassword() {
     buttonLoading(btn, true);
     try {
       await api.changePassword({ phone: session.user.phone, newPassword });
+      const savedLogin = getSavedLogin();
+      if (savedLogin) saveLoginCredentials(savedLogin.loginId, newPassword);
       await logoutUser();
       showToast('เปลี่ยนรหัสผ่านสำเร็จ กรุณาเข้าสู่ระบบด้วยรหัสผ่านใหม่');
     } catch (err) {
@@ -456,6 +443,11 @@ async function renderProducts() {
     let user = session?.user || {};
     const userPhone = user.phone || user.Phone_No;
 
+    // เมื่อเปิดแอปใหม่จาก Session ที่จำไว้ ให้คืนสถานะออนไลน์ก่อนใช้งาน
+    if (api && typeof api.restoreUserUsage === 'function' && userPhone) {
+      await api.restoreUserUsage(userPhone);
+    }
+
     // รีเฟรชจำนวนสิทธิ์จากฐานข้อมูลก่อนวาดหน้า เพื่อให้ค่าหลังใช้คูปองแสดงทันที
     if (api && typeof api.getMemberProfile === 'function' && userPhone) {
       const latestUser = await api.getMemberProfile(userPhone);
@@ -466,26 +458,30 @@ async function renderProducts() {
 
     const products = await api.products(session.token);
 
-    const usedToday = (api && typeof api.checkTodayBillUsage === 'function')
-      ? await api.checkTodayBillUsage(userPhone)
-      : false;
+    const usageStatus = (api && typeof api.getUsageLimitStatus === 'function')
+      ? await api.getUsageLimitStatus(userPhone)
+      : { blocked: false, usedCount: Number(user.All_Use ?? 0), allLimit: Number(user.All_Limit ?? 0), unlimitedAll: Boolean(user.LimitAll), periodUsed: 0, periodLimit: Number(user.Day_Limit ?? 0), periodLabel: ['วัน', 'เดือน', 'ปี'][Number(user.LimitType ?? 0)] || 'วัน', reason: '' };
 
-    const usedCount = user.usedCount ?? user.All_Use ?? 0;
-    const allLimit = user.All_Limit ?? 50;
+    const usedCount = usageStatus.usedCount;
+    const allLimitDisplay = usageStatus.unlimitedAll ? 'ไม่กำหนด' : usageStatus.allLimit;
+    const customerDetail = String(user.address || user.Detail || '').trim();
+    const customerRemark = String(user.project || user.Remark || '').trim();
+    const customerDetailLine = [customerDetail, customerRemark].filter(value => value && value !== '-').join('  ') || '-';
 
     const userInfoHtml = `
       <div class="card user-info-card" style="padding: 1rem;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
           <div>
-            <p><strong>ชื่อ:</strong> ${esc(user.name || user.Name || '-')}</p>
+            <p><strong>ยินดีต้อนรับ</strong> ${esc(user.name || user.Name || '-')}</p>
             <p><strong>เบอร์โทร:</strong> ${esc(userPhone || '-')}</p>
-            <p><strong>รายละเอียด:</strong> ${esc(user.address || user.Detail || '-')}</p>
+            <p style="white-space:pre-wrap;">${esc(customerDetailLine)}</p>
           </div>
         </div>
         <p style="margin-top: 0.5rem; color: #059669; font-weight: bold;">
-          สิทธิ์ที่ใช้ไปแล้ว: ${usedCount}/${allLimit} แก้ว
+          สิทธิ์ทั้งหมด: ${usageStatus.unlimitedAll ? 'ไม่กำหนด' : `${usedCount}/${allLimitDisplay} สิทธิ์`}
         </p>
-        ${usedToday ? '<p style="margin-top: 0.25rem; color: #ef4444; font-size: 0.875rem; font-weight: bold;">⚠️ วันนี้ใช้สิทธิ์ไปแล้ว</p>' : ''}
+        <p style="margin-top:0.25rem; color:#475569; font-weight:600;">ใช้ได้ ${usageStatus.periodLimit} สิทธิ์ / ${usageStatus.periodLabel} (ใช้แล้ว ${usageStatus.periodUsed})</p>
+        ${usageStatus.blocked ? `<p style="margin-top:0.25rem; color:#ef4444; font-size:0.875rem; font-weight:bold;">⚠️ ${esc(usageStatus.reason)}</p>` : ''}
       </div>
     `;
 
@@ -494,7 +490,7 @@ async function renderProducts() {
     const productListHtml = `
       <div class="product-list">
         ${products.map(p => `
-          <button class="product" data-id="${esc(p.id)}" ${usedToday ? 'style="opacity: 0.6; cursor: not-allowed;"' : ''}>
+          <button class="product" data-id="${esc(p.id)}" ${usageStatus.blocked ? 'style="opacity: 0.6; cursor: not-allowed;"' : ''}>
             <span class="product-icon ${esc(p.color)}">
               ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" />` : esc(p.icon || '☕')}
             </span>
@@ -502,7 +498,7 @@ async function renderProducts() {
               <strong>${esc(p.name)}</strong>
               <small>${esc(p.detail)}</small>
             </span>
-            <i>${usedToday ? 'ใช้สิทธิ์แล้ว' : 'เลือก'}</i>
+            <i>${usageStatus.blocked ? 'ใช้สิทธิ์ครบแล้ว' : 'เลือก'}</i>
           </button>
         `).join('')}
       </div>
@@ -513,8 +509,8 @@ async function renderProducts() {
     document.querySelector('#btn-history')?.addEventListener('click', () => renderHistory());
 
     document.querySelectorAll('.product').forEach(el => el.onclick = () => {
-      if (usedToday) {
-        showAppDialog('วันนี้คุณได้ใช้สิทธิ์ไปแล้ว ไม่สามารถใช้ซ้ำได้', { title: 'ไม่สามารถใช้สิทธิ์ได้' });
+      if (usageStatus.blocked) {
+        showAppDialog(usageStatus.reason, { title: 'ไม่สามารถใช้สิทธิ์ได้' });
         return;
       }
       renderConfirm(products.find(p => p.id === el.dataset.id));
@@ -710,10 +706,10 @@ function renderCoupon() {
     }
 
     pollCounter++;
-    if (pollCounter % 3 === 0 && window.api && c.phone) {
+    if (pollCounter % 3 === 0 && window.api?.isCouponConfirmed && c.phone) {
       try {
-        const isUsed = await window.api.checkTodayBillUsage(c.phone);
-        if (isUsed) {
+        const isConfirmed = await window.api.isCouponConfirmed(c.phone, c.id);
+        if (isConfirmed) {
           await completeAndRefresh();
           return;
         }
@@ -758,7 +754,6 @@ function renderSuccessView() {
 
 // เริ่มต้นแอป
 if (session) {
-  checkInactivityTimeout();
   if (session.user?.isDefaultPassword) {
     renderForceChangePassword();
   } else {

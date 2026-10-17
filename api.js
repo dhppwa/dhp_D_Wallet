@@ -71,41 +71,99 @@ function clearQueuedUsageRelease(phone) {
   }
 }
 
+function getLimitPeriod(limitType, now = new Date()) {
+  const type = [0, 1, 2].includes(Number(limitType)) ? Number(limitType) : 0;
+  if (type === 1) {
+    return {
+      start: new Date(now.getFullYear(), now.getMonth(), 1),
+      end: new Date(now.getFullYear(), now.getMonth() + 1, 1),
+      label: 'เดือน'
+    };
+  }
+  if (type === 2) {
+    return {
+      start: new Date(now.getFullYear(), 0, 1),
+      end: new Date(now.getFullYear() + 1, 0, 1),
+      label: 'ปี'
+    };
+  }
+  return {
+    start: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+    end: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1),
+    label: 'วัน'
+  };
+}
+
+async function getUsageLimitStatus(phone) {
+  const supabase = getSupabase();
+  const cleanPhone = cleanString(phone) || getCurrentUserPhone();
+  if (!cleanPhone) throw new Error('ไม่พบเบอร์โทรศัพท์ของผู้ใช้งาน');
+
+  const { data: user, error: userErr } = await supabase
+    .from('Cafe_Amazon_Promosion_House')
+    .select('ID, All_Use, All_Limit, Day_Limit, LimitAll, LimitType')
+    .eq('Phone_No', cleanPhone)
+    .maybeSingle();
+  if (userErr || !user) throw new Error('ไม่พบข้อมูลสมาชิกในระบบ');
+
+  const usedCount = Number(user.All_Use ?? 0);
+  const allLimit = Number(user.All_Limit ?? 0);
+  const unlimitedAll = Boolean(user.LimitAll);
+  const periodLimit = Number(user.Day_Limit ?? 0);
+  const period = getLimitPeriod(user.LimitType);
+
+  const { data: bills, error: billErr } = await supabase
+    .from('Cafe_Amazon_Bill')
+    .select('ID')
+    .eq('Cafe_Amazon_PK', user.ID)
+    .gte('InsertDate', period.start.toISOString())
+    .lt('InsertDate', period.end.toISOString());
+  if (billErr) throw new Error(`ตรวจสอบจำนวนการใช้สิทธิ์ไม่สำเร็จ: ${billErr.message}`);
+
+  const periodUsed = (bills || []).length;
+  const totalBlocked = !unlimitedAll && allLimit > 0 && usedCount >= allLimit;
+  const periodBlocked = periodLimit > 0 && periodUsed >= periodLimit;
+  const reason = totalBlocked
+    ? `คุณใช้สิทธิ์ครบทั้งหมด ${allLimit} สิทธิ์แล้ว`
+    : periodBlocked
+      ? `คุณใช้สิทธิ์ครบ ${periodLimit} สิทธิ์ต่อ${period.label}แล้ว`
+      : '';
+
+  return {
+    blocked: totalBlocked || periodBlocked,
+    reason,
+    usedCount,
+    allLimit,
+    unlimitedAll,
+    periodUsed,
+    periodLimit,
+    limitType: Number(user.LimitType ?? 0),
+    periodLabel: period.label
+  };
+}
+
 window.api = {
   isDemo: false,
 
   // 📌 ตรวจสอบการใช้สิทธิ์วันนี้
   async checkTodayBillUsage(phone) {
-    const supabase = getSupabase();
-    const cleanPhone = cleanString(phone) || getCurrentUserPhone();
-    if (!cleanPhone) return false;
+    return (await getUsageLimitStatus(phone)).blocked;
+  },
 
-    const { data: user, error: userErr } = await supabase
+  async getUsageLimitStatus(phone) {
+    return getUsageLimitStatus(phone);
+  },
+
+  async isCouponConfirmed(phone, couponNo) {
+    const cleanPhone = cleanString(phone) || getCurrentUserPhone();
+    if (!cleanPhone || !couponNo) return false;
+    const { data, error } = await getSupabase()
       .from('Cafe_Amazon_Promosion_House')
-      .select('ID')
+      .select('Confirm_Coupon, Coupon_No')
       .eq('Phone_No', cleanPhone)
       .maybeSingle();
-
-    if (userErr || !user) return false;
-
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-
-    const startOfDay = new Date(year, now.getMonth(), now.getDate()).toISOString();
-    const endOfDay = new Date(year, now.getMonth(), now.getDate() + 1).toISOString();
-
-    const { data: bill, error: billErr } = await supabase
-      .from('Cafe_Amazon_Bill')
-      .select('ID')
-      .eq('Cafe_Amazon_PK', user.ID)
-      .gte('InsertDate', startOfDay)
-      .lt('InsertDate', endOfDay)
-      .limit(1);
-
-    if (billErr) return false;
-    return bill && bill.length > 0;
+    if (error || !data) return false;
+    return Boolean(data.Confirm_Coupon) && String(data.Coupon_No || '') === String(couponNo);
   },
 
   // 1. เข้าสู่ระบบ (เช็ก PassWord)
@@ -142,17 +200,22 @@ async login({ loginId, phone, password }) {
     clearQueuedUsageRelease(cleanPhone);
   }
   
-  // แปลงค่ารหัสผ่านใน DB เป็น String เพื่อป้องกันปัญหา Type mismatch
-  const dbPassword = String(data.PassWord ?? '').trim();
-  const inputPassword = String(password ?? '').trim();
+  // ตรวจรหัสผ่านทุกตัวแบบตรงกันทั้งหมด รหัสว่างเดิมให้ใช้ 1234 เป็นรหัสเริ่มต้น
+  const dbPassword = String(data.PassWord ?? '');
+  const expectedPassword = dbPassword === '' ? '1234' : dbPassword;
+  const inputPassword = String(password ?? '');
 
-  // ถ้ารหัสผ่านใน DB ไม่ใช่ค่าว่าง/1234 และกรอกมาไม่ตรง ให้แจ้งเตือน
-  if (dbPassword && dbPassword !== '1234' && dbPassword !== inputPassword) {
+  if (inputPassword !== expectedPassword) {
     throw new Error('รหัสผ่านไม่ถูกต้อง');
   }
 
-  // 📌 ตรวจสอบว่าเป็นรหัสผ่านเริ่มต้น (1234 หรือ ค่าว่าง) หรือไม่
-  const isDefaultPassword = (dbPassword === '' || dbPassword === '1234' || inputPassword === '1234');
+  // Client อนุญาตเฉพาะสมาชิกทั่วไปเท่านั้น บัญชีแอดมินใช้สำหรับฝั่ง Staff
+  if (Number(data.Access_Level ?? 0) === 1) {
+    throw new Error('สถานะแอดมินไม่สามารถใช้งาน เฉพาะผู้ใช้งานทั่วไปเท่านั้น');
+  }
+
+  // 📌 บังคับเปลี่ยนรหัสผ่านเมื่อเข้าสู่ระบบด้วยรหัสเริ่มต้น 1234 เท่านั้น
+  const isDefaultPassword = expectedPassword === '1234';
 
   // ยึดสิทธิ์การใช้งานแบบมีเงื่อนไข เพื่อไม่ให้เบอร์เดียวกันเข้าได้พร้อมกัน 2 เครื่อง
   // ตรวจสอบก่อนเพื่อแสดงข้อความที่ชัดเจน และ update แบบมีเงื่อนไขเพื่อกันการกดพร้อมกัน
@@ -184,8 +247,10 @@ async login({ loginId, phone, password }) {
     Detail: data.Detail || '-',
     usedCount: usedCount,
     All_Use: usedCount,
-    All_Limit: data.All_Limit || 50,
-    Day_Limit: data.Day_Limit || 1,
+    All_Limit: Number(data.All_Limit ?? 0),
+    Day_Limit: Number(data.Day_Limit ?? 0),
+    LimitAll: Boolean(data.LimitAll),
+    LimitType: Number(data.LimitType ?? 0),
     Username: data.Username || '',
     Email: data.Email || '',
     LoginType: Number(data.LoginType ?? 0),
@@ -212,7 +277,7 @@ async login({ loginId, phone, password }) {
     if (!cleanPhone) throw new Error('ไม่พบเบอร์โทรศัพท์ของผู้ใช้งาน');
     const { data, error } = await getSupabase()
       .from('Cafe_Amazon_Promosion_House')
-      .select('ID, Phone_No, Name, Detail, Remark, All_Use, All_Limit, Day_Limit, Access_Level, Username, LoginType, Email')
+      .select('ID, Phone_No, Name, Detail, Remark, All_Use, All_Limit, Day_Limit, LimitAll, LimitType, Access_Level, Username, LoginType, Email')
       .eq('Phone_No', cleanPhone)
       .maybeSingle();
     if (error) throw new Error(`ไม่สามารถดึงข้อมูลสมาชิกล่าสุด: ${error.message}`);
@@ -232,6 +297,8 @@ async login({ loginId, phone, password }) {
       All_Use: usedCount,
       All_Limit: Number(data.All_Limit ?? 50),
       Day_Limit: Number(data.Day_Limit ?? 1),
+      LimitAll: Boolean(data.LimitAll),
+      LimitType: Number(data.LimitType ?? 0),
       Access_Level: Number(data.Access_Level ?? 0),
       Username: data.Username || '',
       LoginType: Number(data.LoginType ?? 0),
@@ -315,15 +382,14 @@ async login({ loginId, phone, password }) {
 
     const { data: userRecord, error: fetchErr } = await supabase
       .from('Cafe_Amazon_Promosion_House')
-      .select('All_Use, All_Limit, Detail')
+      .select('All_Use, All_Limit, Day_Limit, LimitAll, LimitType, Detail')
       .eq('Phone_No', cleanPhone)
       .maybeSingle();
 
     if (fetchErr || !userRecord) throw new Error('ไม่พบข้อมูลเบอร์โทรศัพท์ในระบบ');
     
-    if ((userRecord.All_Use ?? 0) >= (userRecord.All_Limit ?? 50)) {
-      throw new Error(`คุณใช้สิทธิ์ครบจำนวนเต็ม ${userRecord.All_Limit} แก้วแล้ว`);
-    }
+    const usageStatus = await getUsageLimitStatus(cleanPhone);
+    if (usageStatus.blocked) throw new Error(usageStatus.reason);
 
     const strProductId = String(productId);
     const couponId = `CPN-${strProductId}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;

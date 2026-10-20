@@ -16,17 +16,6 @@ document.addEventListener('touchstart', function (e) {
   }
 }, { passive: false });
 
-// ป้องกันการดึงจากขอบบนเพื่อ Refresh หน้าเว็บ ซึ่งทำให้ PWA กลับสู่หน้าหลัก
-let clientTouchStartY = 0;
-document.addEventListener('touchstart', event => {
-  clientTouchStartY = event.touches[0]?.clientY || 0;
-}, { passive: true });
-document.addEventListener('touchmove', event => {
-  const isPullingDown = (event.touches[0]?.clientY || 0) > clientTouchStartY;
-  const atTop = (document.scrollingElement?.scrollTop || 0) <= 0;
-  if (isPullingDown && atTop) event.preventDefault();
-}, { passive: false });
-
 const getApi = () => window.api;
 const app = document.querySelector('#app');
 const toast = document.querySelector('#toast');
@@ -118,19 +107,11 @@ const removeVisibleProductCode = value => String(value ?? '')
   .trim();
 const esc = value => removeVisibleProductCode(value).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[c]));
 
-function maskPhoneNumber(phone) {
-  if (!phone) return '-';
-  const value = String(phone).trim();
-  if (value === '-') return '-';
-  if (value.length <= 4) return 'X'.repeat(value.length);
-  return `${'X'.repeat(value.length - 4)}${value.slice(-4)}`;
-}
-
 function getMemberLoginDisplay(member = {}) {
   const loginType = Number(member.LoginType ?? member.loginType ?? 0);
   if (loginType === 1) return { label: 'Username', value: member.Username || member.username || '-' };
   if (loginType === 2) return { label: 'Email', value: member.Email || member.email || '-' };
-  return { label: 'เบอร์โทร', value: maskPhoneNumber(member.Phone_No || member.phone || '-') };
+  return { label: 'โทร', value: member.Phone_No || member.phone || '-' };
 }
 let appDialogTimer = null;
 function showAppDialog(message, {
@@ -371,7 +352,7 @@ function renderAuth() {
   const rememberLoginEnabled = localStorage.getItem(REMEMBER_LOGIN_ENABLED_KEY) !== '0';
   layout(`<div class="auth-wrap"><div class="hero"><img src="public/assets/image/icon-192.png" alt="D Coupon" class="hero-logo" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 0.5rem; border-radius: 8px;"><div class="login-brand-name">D Coupon</div><h2>เข้าสู่ระบบเพื่อรับสิทธิ์</h2></div>
   <form class="card auth-card" id="auth-form">
-    <label>User (Username / เบอร์โทรศัพท์ / Email)<input required name="loginId" type="text" autocomplete="username" value="${esc(savedLogin?.loginId || '')}"></label>
+    <label>User (Username / โทรศัพท์ / Email)<input required name="loginId" type="text" autocomplete="username" value="${esc(savedLogin?.loginId || '')}"></label>
     <label>รหัสผ่าน<div class="password-input-wrap"><input required name="password" type="password" minlength="4" autocomplete="current-password" value="${esc(savedLogin?.password || '')}"><button class="password-toggle" data-password-toggle type="button" aria-label="แสดงรหัสผ่าน" title="แสดงรหัสผ่าน"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label>
     <label style="display:flex; flex-direction:row; align-items:center; gap:9px; cursor:pointer; font-weight:600;"><input name="rememberLogin" type="checkbox" value="1" ${rememberLoginEnabled ? 'checked' : ''} style="width:18px; height:18px; margin:0;"> จำรหัส / เข้าใช้งานอัตโนมัติ</label>
     <button class="primary" type="submit">เข้าสู่ระบบ <span>→</span></button>
@@ -516,7 +497,7 @@ async function renderProducts() {
         <div class="product-user-info-main">
           <div>
             <p><strong>ยินดีต้อนรับ</strong> ${esc(user.name || user.Name || '-')}</p>
-            <p><strong>เบอร์โทร:</strong> ${esc(maskPhoneNumber(userPhone))}</p>
+            <p><strong>โทร:</strong> ${esc(userPhone || '-')}</p>
             <p style="white-space:pre-wrap;">${esc(customerDetailLine)}</p>
           </div>
         </div>
@@ -740,7 +721,6 @@ function renderCoupon() {
       .subscribe();
   }
 
-  let pollCounter = 0;
   const update = async () => { 
     const secs = Math.max(0, Math.ceil((c.expiresAt - Date.now()) / 1000)); 
     const el = document.querySelector('#countdown'); 
@@ -748,8 +728,9 @@ function renderCoupon() {
       el.textContent = `${String(Math.floor(secs / 60)).padStart(2, '0')}:${String(secs % 60).padStart(2, '0')}`; 
     }
 
-    pollCounter++;
-    if (pollCounter % 3 === 0 && window.api?.isCouponConfirmed && c.phone) {
+    // ตรวจทุกวินาที เพื่อกลับหน้าสินค้าทันทีเมื่อ Staff บันทึกใช้สิทธิ์
+    // โดยไม่ต้องรอให้งานพิมพ์ใบเสร็จเสร็จสิ้น
+    if (window.api?.isCouponConfirmed && c.phone) {
       try {
         const isConfirmed = await window.api.isCouponConfirmed(c.phone, c.id);
         if (isConfirmed) {

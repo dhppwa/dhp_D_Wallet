@@ -16,6 +16,17 @@ document.addEventListener('touchstart', function (e) {
   }
 }, { passive: false });
 
+// ป้องกันการดึงจากขอบบนเพื่อ Refresh หน้าเว็บ ซึ่งทำให้ PWA กลับสู่หน้าหลัก
+let clientTouchStartY = 0;
+document.addEventListener('touchstart', event => {
+  clientTouchStartY = event.touches[0]?.clientY || 0;
+}, { passive: true });
+document.addEventListener('touchmove', event => {
+  const isPullingDown = (event.touches[0]?.clientY || 0) > clientTouchStartY;
+  const atTop = (document.scrollingElement?.scrollTop || 0) <= 0;
+  if (isPullingDown && atTop) event.preventDefault();
+}, { passive: false });
+
 const getApi = () => window.api;
 const app = document.querySelector('#app');
 const toast = document.querySelector('#toast');
@@ -107,11 +118,19 @@ const removeVisibleProductCode = value => String(value ?? '')
   .trim();
 const esc = value => removeVisibleProductCode(value).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[c]));
 
+function maskPhoneNumber(phone) {
+  if (!phone) return '-';
+  const value = String(phone).trim();
+  if (value === '-') return '-';
+  if (value.length <= 4) return 'X'.repeat(value.length);
+  return `${'X'.repeat(value.length - 4)}${value.slice(-4)}`;
+}
+
 function getMemberLoginDisplay(member = {}) {
   const loginType = Number(member.LoginType ?? member.loginType ?? 0);
   if (loginType === 1) return { label: 'Username', value: member.Username || member.username || '-' };
   if (loginType === 2) return { label: 'Email', value: member.Email || member.email || '-' };
-  return { label: 'เบอร์โทร', value: member.Phone_No || member.phone || '-' };
+  return { label: 'เบอร์โทร', value: maskPhoneNumber(member.Phone_No || member.phone || '-') };
 }
 let appDialogTimer = null;
 function showAppDialog(message, {
@@ -497,7 +516,7 @@ async function renderProducts() {
         <div class="product-user-info-main">
           <div>
             <p><strong>ยินดีต้อนรับ</strong> ${esc(user.name || user.Name || '-')}</p>
-            <p><strong>เบอร์โทร:</strong> ${esc(userPhone || '-')}</p>
+            <p><strong>เบอร์โทร:</strong> ${esc(maskPhoneNumber(userPhone))}</p>
             <p style="white-space:pre-wrap;">${esc(customerDetailLine)}</p>
           </div>
         </div>

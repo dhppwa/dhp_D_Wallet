@@ -347,7 +347,9 @@ function renderAuth() {
   cleanupSubscriptions();
 
   const savedLogin = getSavedLogin();
-  const rememberLoginEnabled = Boolean(savedLogin) || localStorage.getItem(REMEMBER_LOGIN_ENABLED_KEY) === '1';
+  // ค่าเริ่มต้นสำหรับการเข้าใช้งานครั้งแรก: ติ๊กจำรหัส/เข้าใช้งานอัตโนมัติไว้ก่อน
+  // หากผู้ใช้เอาติ๊กออก ระบบจะบันทึกเป็น '0' เพื่อเคารพการเลือกครั้งถัดไป
+  const rememberLoginEnabled = localStorage.getItem(REMEMBER_LOGIN_ENABLED_KEY) !== '0';
   layout(`<div class="auth-wrap"><div class="hero"><img src="public/assets/image/icon-192.png" alt="D Wallet" class="hero-logo" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 0.5rem; border-radius: 8px;"><div class="login-brand-name">D Wallet</div><h2>เข้าสู่ระบบเพื่อรับสิทธิ์</h2></div>
   <form class="card auth-card" id="auth-form">
     <label>User (Username / เบอร์โทรศัพท์ / Email)<input required name="loginId" type="text" autocomplete="username" value="${esc(savedLogin?.loginId || '')}"></label>
@@ -373,7 +375,7 @@ function renderAuth() {
         localStorage.setItem(REMEMBER_LOGIN_ENABLED_KEY, '1');
       } else {
         localStorage.removeItem(SAVED_LOGIN_KEY);
-        localStorage.removeItem(REMEMBER_LOGIN_ENABLED_KEY);
+        localStorage.setItem(REMEMBER_LOGIN_ENABLED_KEY, '0');
       }
       saveSession(loginRes, rememberLogin);
 

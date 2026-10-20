@@ -1,5 +1,5 @@
 {
-  "name": "d-wallet-pwa",
+  "name": "d-coupon-pwa",
   "private": true,
   "scripts": {
     "start": "node server.js"

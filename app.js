@@ -231,7 +231,7 @@ function showInstallGuide() {
       <div style="width:min(100%,360px); padding:22px; border-radius:18px; background:#fffaf4; color:#2c241d; box-shadow:0 20px 45px rgba(0,0,0,.28); text-align:center;">
         <div style="font-size:36px;">📲</div>
         <h2 style="margin:6px 0; font-size:1.3rem; color:#194832;">ติดตั้งแอป</h2>
-        <p style="margin:0 0 16px; color:#766b5e; line-height:1.55;">${ios ? 'แตะปุ่ม Share (□↑) ใน Safari แล้วเลือก “Add to Home Screen” เพื่อเพิ่มแอปลงหน้าจอหลัก' : 'ติดตั้ง D Wallet เพื่อเปิดใช้งานได้สะดวกยิ่งขึ้น'}</p>
+        <p style="margin:0 0 16px; color:#766b5e; line-height:1.55;">${ios ? 'แตะปุ่ม Share (□↑) ใน Safari แล้วเลือก “Add to Home Screen” เพื่อเพิ่มแอปลงหน้าจอหลัก' : 'ติดตั้ง D Coupon เพื่อเปิดใช้งานได้สะดวกยิ่งขึ้น'}</p>
         <div style="display:flex; justify-content:center; gap:10px;">
           <button id="btn-dismiss-install-guide" type="button" style="padding:10px 14px; border-radius:10px; background:#e8efe4; color:#194832; font-weight:700;">ภายหลัง</button>
           ${ios ? '' : '<button id="btn-install-pwa" type="button" style="padding:10px 14px; border-radius:10px; background:#256b45; color:#fff; font-weight:700;">ติดตั้งแอป</button>'}
@@ -350,7 +350,7 @@ function renderAuth() {
   // ค่าเริ่มต้นสำหรับการเข้าใช้งานครั้งแรก: ติ๊กจำรหัส/เข้าใช้งานอัตโนมัติไว้ก่อน
   // หากผู้ใช้เอาติ๊กออก ระบบจะบันทึกเป็น '0' เพื่อเคารพการเลือกครั้งถัดไป
   const rememberLoginEnabled = localStorage.getItem(REMEMBER_LOGIN_ENABLED_KEY) !== '0';
-  layout(`<div class="auth-wrap"><div class="hero"><img src="public/assets/image/icon-192.png" alt="D Wallet" class="hero-logo" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 0.5rem; border-radius: 8px;"><div class="login-brand-name">D Wallet</div><h2>เข้าสู่ระบบเพื่อรับสิทธิ์</h2></div>
+  layout(`<div class="auth-wrap"><div class="hero"><img src="public/assets/image/icon-192.png" alt="D Coupon" class="hero-logo" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 0.5rem; border-radius: 8px;"><div class="login-brand-name">D Coupon</div><h2>เข้าสู่ระบบเพื่อรับสิทธิ์</h2></div>
   <form class="card auth-card" id="auth-form">
     <label>User (Username / เบอร์โทรศัพท์ / Email)<input required name="loginId" type="text" autocomplete="username" value="${esc(savedLogin?.loginId || '')}"></label>
     <label>รหัสผ่าน<div class="password-input-wrap"><input required name="password" type="password" minlength="4" autocomplete="current-password" value="${esc(savedLogin?.password || '')}"><button class="password-toggle" data-password-toggle type="button" aria-label="แสดงรหัสผ่าน" title="แสดงรหัสผ่าน"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label>

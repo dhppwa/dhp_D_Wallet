@@ -6,33 +6,6 @@
 
 เปิดผ่าน local web server (PWA/service worker ไม่ทำงานหากเปิด `index.html` ตรง ๆ) เช่น VS Code Live Server หรือ `npx serve .` แล้วเปิด URL ที่ได้บนโทรศัพท์หรือคอมพิวเตอร์
 
-## การพิมพ์ใบเสร็จ
-
-หน้าใบเสร็จมีวิธีพิมพ์ 2 แบบ:
-
-- **หน้าต่างพิมพ์ระบบ** (ค่าเริ่มต้น): ใช้ได้กับเครื่องพิมพ์ที่ระบบติดตั้งไดรเวอร์หรือ print service แล้ว เช่น Xprinter XP-Q90EC ผ่าน USB, Bluetooth Classic หรือ LAN รวมถึงเครื่องพิมพ์ทั่วไป ให้เลือกเครื่องพิมพ์และกระดาษ 58 มม. ในหน้าต่างพิมพ์
-- **Bluetooth BLE**: ใช้กับเครื่องพิมพ์ที่รองรับ BLE/GATT และ Web Bluetooth เท่านั้น ต้องเปิดด้วย Chrome/Edge บน HTTPS หรือ localhost
-
-XP-Q90EC เป็น Bluetooth Classic จึงต้องเลือก **หน้าต่างพิมพ์ระบบ**; ไม่สามารถเชื่อมต่อโดยตรงด้วย Web Bluetooth จาก PWA ได้. บนคอมพิวเตอร์ให้ติดตั้งไดรเวอร์ Xprinter ก่อน ส่วน Android ต้องติดตั้ง print service หรือแอปของเครื่องพิมพ์ที่ทำให้เครื่องปรากฏในเมนูพิมพ์ของระบบ.
-
-### พิมพ์อัตโนมัติด้วย Print Agent (Windows)
-
-Print Agent ใช้กับ PWA ที่เปิดบน **คอมพิวเตอร์ Windows เครื่องเดียวกับที่เชื่อมและติดตั้งไดรเวอร์เครื่องพิมพ์**. เหมาะกับ XP-Q90EC ผ่าน USB, Bluetooth Classic หรือ LAN และไม่ต้องเปิดหน้าต่างเลือกเครื่องพิมพ์ทุกใบเสร็จ.
-
-1. ติดตั้งไดรเวอร์ XP-Q90EC ใน Windows และพิมพ์ทดสอบจาก Windows ให้สำเร็จก่อน
-2. ติดตั้ง [Node.js รุ่น LTS](https://nodejs.org/) แล้วดับเบิลคลิก `print-agent/start.bat` (ต้องเปิดหน้าต่างนี้ทิ้งไว้)
-3. เปิด `http://127.0.0.1:17891/health` บนคอมพิวเตอร์เดียวกัน ต้องเห็น `{"ok":true,...}`
-4. ตั้งค่าใน `config.js`:
-
-```js
-window.PRINT_AGENT_URL = 'http://127.0.0.1:17891';
-window.PRINT_AGENT_PRINTER_NAME = 'ชื่อเครื่องพิมพ์ใน Windows'; // หรือ '' เพื่อใช้ Default printer
-```
-
-5. รีเฟรช PWA แล้วเลือก **พิมพ์อัตโนมัติผ่าน Print Agent (Windows)**
-
-เมื่อ Print Agent ตอบสำเร็จ แอปจึงบันทึกการตัดสิทธิ์. Print Agent รับคำสั่งจากเครื่องเดียวกันเท่านั้น (`127.0.0.1`).
-
 ## เชื่อม Web API SQL
 
 แก้ `API_BASE_URL` ใน [config.js](config.js) และทำ endpoint ตามนี้:

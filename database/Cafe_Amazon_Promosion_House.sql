@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `Cafe_Amazon_Promosion_House` (
 คำสั่งสร้างเบส
 --สคริปต์ SQL ที่ถูกต้องสมบูรณ์สำหรับ Supabase (PostgreSQL)
 --หากคุณใช้งาน Supabase (ตามที่เห็นในไฟล์ api.js) ให้ใช้สคริปต์ชุดนี้รันใน SQL Editor ของ Supabase
-/*
+/*-- 1. ลบตารางเดิมออกหากมีอยู่ (ลบ Bill ก่อนเพราะเป็นตารางลูก)
 -- 1. ลบตารางเดิมออกหากมีอยู่ (ลบ Bill ก่อนเพราะเป็นตารางลูก)
 DROP TABLE IF EXISTS "Cafe_Amazon_Bill";
 DROP TABLE IF EXISTS "Cafe_Amazon_Promosion_House";
@@ -94,6 +94,7 @@ CREATE TABLE "Cafe_Amazon_Bill" (
 -- 4. สร้าง Index เพื่อเพิ่มความเร็วในการค้นหา
 CREATE INDEX "idx_house_coupon" ON "Cafe_Amazon_Promosion_House" ("Coupon_No");
 CREATE INDEX "idx_bill_pk" ON "Cafe_Amazon_Bill" ("Cafe_Amazon_PK");
+
 */
 
 -------------------------------------------------------------

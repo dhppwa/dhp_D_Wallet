@@ -1,106 +1,101 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  
-  <title>D House x Café Amazon</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>D Coupon</title>
+    
+    <meta name="description" content="ระบบรับสิทธิ์และคูปองดิจิทัล" />
+    <meta name="theme-color" content="#435f52" />
 
-  <!-- เชื่อมโยงไฟล์ Manifest สำหรับ Android / Chrome -->
-  <link rel="manifest" href="manifest.json?v=3">
-  <meta name="theme-color" content="#435f52">
+    <!-- PWA & Web App Manifest -->
+    <link rel="manifest" href="manifest.json?v=3" />
+    <link rel="icon" href="public/assets/image/icon-192.png?v=3" type="image/png" />
 
-  <!-- รองรับ iOS Safari -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="D House x Café Amazon">
-  <link rel="apple-touch-icon" href="public/assets/image/icon-192.png?v=3">
+    <!-- iOS Safari Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="D Coupon" />
+    <link rel="apple-touch-icon" href="public/assets/image/icon-192.png?v=3" />
 
-  <link rel="stylesheet" href="styles.css?v=42">
-  
-  <!-- โหลดฟอนต์ภาษาไทยสำหรับ Canvas Printer -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts (Noto Sans Thai & Sarabun) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Sarabun:wght@400;700&display=swap" rel="stylesheet" />
 
-  <style>
-    body { margin: 0; padding: 0; }
-    #toast {
-      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.85); color: #fff; padding: 12px 24px;
-      border-radius: 25px; font-size: 14px; opacity: 0; pointer-events: none;
-      transition: opacity 0.3s ease; z-index: 9999;
-    }
-    #toast.show { opacity: 1; }
-  </style>
-</head>
-<body>
+    <!-- CDN Preconnect & Stylesheets -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="stylesheet" href="styles.css?v=29" />
+  </head>
+  <body>
+    <main id="app" aria-live="polite"></main>
+    <div id="toast" role="status"></div>
 
-  <div id="app"></div>
-  <div id="toast" role="status"></div>
-
-  <script>
-    // ป้องกันหน้าขาวหากเกิดข้อผิดพลาดตอนเริ่มต้นแอป
-    window.addEventListener('error', function (event) {
-      const target = document.getElementById('app');
-      if (target && !target.textContent.trim()) {
-        target.innerHTML = '<div style="padding:32px;font-family:system-ui;color:#14382d"><h2>ไม่สามารถเปิดแอปได้</h2><p>กรุณารีเฟรชหน้าอีกครั้ง</p><small>' + (event.message || 'Startup error') + '</small></div>';
-      }
-    });
-  </script>
-
-  <!-- Supabase JS SDK -->
-  <!-- Library สำหรับสแกน QR Code -->
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-
-  <!-- ไฟล์โค้ดของแอป -->
-  <script src="config.js?v=9"></script>
-  <script src="d1-client.js?v=3"></script>
-    <script src="api.js?v=39"></script>
-    <script src="app.js?v=179"></script>
-
-  <!-- สคริปต์เปิดใช้งาน Service Worker สำหรับ Android PWA -->
-  <script>
-    let deferredInstallPrompt = null;
-    window.addEventListener('beforeinstallprompt', (event) => {
-      event.preventDefault();
-      deferredInstallPrompt = event;
-      window.pwaInstallReady = true;
-      window.dispatchEvent(new Event('pwa-install-available'));
-    });
-
-    window.requestPwaInstall = async () => {
-      if (!deferredInstallPrompt || window.matchMedia('(display-mode: standalone)').matches) return false;
-      try {
-        await deferredInstallPrompt.prompt();
-        await deferredInstallPrompt.userChoice;
-        return true;
-      } finally {
-        deferredInstallPrompt = null;
-      }
-    };
-
-    window.addEventListener('appinstalled', () => {
-      deferredInstallPrompt = null;
-      window.dispatchEvent(new Event('pwa-installed'));
-    });
-
-    if ('serviceWorker' in navigator) {
-      let refreshingForUpdate = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (refreshingForUpdate) return;
-        refreshingForUpdate = true;
-        window.location.reload();
+    <script>
+      // Prevent a blank page if a browser reports a startup error.
+      window.addEventListener('error', function (event) {
+        const target = document.getElementById('app');
+        if (target && !target.textContent.trim()) {
+          target.innerHTML = '<div style="padding:32px;font-family:system-ui;color:#14382d"><h2>ไม่สามารถเปิดแอปได้</h2><p>กรุณารีเฟรชหน้าอีกครั้ง</p><small>' + (event.message || 'Startup error') + '</small></div>';
+        }
       });
-      window.addEventListener('load', () => {
+    </script>
+
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <!-- Application Scripts -->
+    <script src="config.js?v=9"></script>
+    <script src="d1-client.js?v=3"></script>
+    <script src="api.js?v=28"></script>
+    <script src="app.js?v=61"></script>
+
+    <!-- 📌 PWA Service Worker & Install Prompt Handler (ไว้ท้ายสุดจุดเดียว) -->
+    <script>
+      // 1. ลงทะเบียน Service Worker ทันที เพื่อให้ Chrome ตรวจสอบ PWA ได้ในหน้าแรก
+      if ('serviceWorker' in navigator) {
+        let refreshingForUpdate = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (refreshingForUpdate) return;
+          refreshingForUpdate = true;
+          window.location.reload();
+        });
         navigator.serviceWorker.register('./sw.js', { scope: './', updateViaCache: 'none' })
           .then(async (reg) => {
             await reg.update();
             console.log('SW Registered:', reg.scope);
           })
-          .catch((err) => console.error('SW Error:', err));
+          .catch((err) => console.error('SW Registration Failed:', err));
+      }
+
+      // เก็บเหตุการณ์ติดตั้งไว้ แล้วเรียกหน้าติดตั้งของ Chrome จากการแตะครั้งแรกบนหน้า Login
+      // เบราว์เซอร์ไม่อนุญาตให้บังคับเปิดกล่องติดตั้งเองทันทีโดยไม่มีการแตะของผู้ใช้
+      let deferredInstallPrompt = null;
+      window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        window.pwaInstallReady = true;
+        window.dispatchEvent(new Event('pwa-install-available'));
       });
-    }
-  </script>
-</body>
+
+      window.requestPwaInstall = async () => {
+        if (!deferredInstallPrompt || window.matchMedia('(display-mode: standalone)').matches) return;
+        try {
+          await deferredInstallPrompt.prompt();
+          await deferredInstallPrompt.userChoice;
+          return true;
+        } catch (err) {
+          console.warn('ไม่สามารถเปิดหน้าติดตั้ง PWA:', err);
+        } finally {
+          deferredInstallPrompt = null;
+        }
+      };
+
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      console.log('ติดตั้ง D Coupon สำเร็จ');
+      window.dispatchEvent(new Event('pwa-installed'));
+    });
+    </script>
+  </body>
 </html>

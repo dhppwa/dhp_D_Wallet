@@ -1,121 +1,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap');
-.coupon-actions{display:grid;grid-template-columns:1fr 90px;gap:10px;margin-top:15px}.coupon-actions .secondary{margin:0}.close-coupon{border-radius:13px;background:#edf2ef;color:#597168;padding:12px;font-weight:700}
-:root{--green:#076749;--deep:#064532;--mint:#e8f5ee;--ink:#14382d;--muted:#6d8079;--line:#e1ebe5;--gold:#f5c765}*{box-sizing:border-box}html,body{overscroll-behavior-y:none}body{margin:0;background:#f5f8f6;color:var(--ink);font-family:'Noto Sans Thai',system-ui,sans-serif;min-height:100vh}button,input{font:inherit}button{cursor:pointer;border:0}#app{max-width:520px;margin:auto;min-height:100vh;background:#fff}.shell{padding:22px 22px 38px;min-height:100vh}.topbar{display:flex;align-items:center;gap:10px;margin-bottom:31px}.brand-mark,.back{width:38px;height:38px;border-radius:12px;background:var(--green);color:white;display:grid;place-items:center;font-size:20px;flex:0 0 auto}.back{font-size:35px;line-height:1;background:var(--mint);color:var(--green)}.topbar p{margin:0;color:var(--muted);font-size:11px}.topbar h1{margin:-3px 0 0;font-size:19px}.logout{margin-left:auto;background:none;color:var(--muted);font-size:13px}.demo-note{background:#fff8e5;color:#765b19;border-radius:10px;padding:8px 11px;font-size:11px;margin:-19px 0 20px}.demo-note code{font-family:monospace}.auth-wrap{padding-top:25px}.hero{text-align:center;padding:5px 20px 28px}.hero-icon{width:65px;height:65px;background:var(--mint);border-radius:22px;display:grid;place-items:center;color:var(--green);font-size:32px;margin:auto}.hero h2{font-size:25px;line-height:1.35;margin:18px 0 8px}.hero p,.page-title span{color:var(--muted);font-size:14px;line-height:1.65;margin:0}.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 8px 24px #0a3c2510}.auth-card{display:grid;gap:15px}label{display:grid;gap:7px;font-size:13px;font-weight:600}input{border:1px solid #d6e2db;border-radius:11px;padding:12px 13px;color:var(--ink);outline:none;font-size:15px}input:focus{border-color:var(--green);box-shadow:0 0 0 3px #0a70421c}.primary{margin-top:4px;width:100%;display:flex;justify-content:center;gap:10px;align-items:center;background:var(--green);color:white;border-radius:13px;padding:13px;font-weight:700}.primary span{font-size:20px}.primary:disabled{opacity:.7}.switch{text-align:center;color:var(--muted);font-size:13px;margin:0}.switch button{padding:0;background:none;color:var(--green);font-weight:700}.welcome{padding:13px 0 23px}.welcome p{margin:0;color:var(--green);font-size:14px;font-weight:600}.welcome h2{margin:3px 0;font-size:25px}.menu-card{width:100%;display:flex;text-align:left;align-items:center;gap:16px;padding:20px;border-radius:19px;background:linear-gradient(135deg,#08704e,#04523a);color:#fff;box-shadow:0 12px 22px #075a4130}.menu-icon{background:#ffffff22;border-radius:14px;width:49px;height:49px;display:grid;place-items:center;font-size:26px}.menu-card strong,.menu-card small{display:block}.menu-card strong{font-size:18px}.menu-card small{margin-top:2px;color:#d7f1e4;font-size:12px}.menu-card b{margin-left:auto;font-size:25px}.hint{text-align:center;color:var(--muted);font-size:12px;margin:20px}.page-title{margin:-3px 0 23px}.page-title p{color:var(--green);font-size:12px;font-weight:700;margin:0}.page-title h2{font-size:23px;margin:4px 0}.product-list{display:grid;gap:12px}.product{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-radius:17px;padding:14px;text-align:left}.product:hover{border-color:var(--green);background:#fbfefc}.product-icon{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-size:28px}.gold{background:#fff7df}.orange{background:#fff0e7}.green{background:#e3f6ed}.product strong,.product small{display:block}.product strong{font-size:15px}.product small{font-size:12px;color:var(--muted);margin-top:2px}.product i{font-style:normal;color:var(--green);font-size:12px;font-weight:700;margin-left:auto}.selected{display:flex;gap:14px;align-items:center;margin-bottom:15px;background:#f1faf5;border-color:#cde7d7}.selected>span{font-size:31px}.selected strong,.selected small,.selected em{display:block}.selected small,.selected em{font-size:12px;color:var(--muted);font-style:normal}.selected strong{font-size:16px}.details{display:grid;gap:15px}.privacy{background:#f7faf8;margin:0;padding:9px;border-radius:9px;font-size:11px;color:var(--muted)}.coupon-head{text-align:center;margin:0 0 17px}.success{margin:auto;width:45px;height:45px;border-radius:50%;background:#dbf5e7;color:var(--green);display:grid;place-items:center;font-size:25px;font-weight:bold}.coupon-head p{font-size:13px;color:var(--green);font-weight:700;margin:8px 0 0}.coupon-head h2{font-size:19px;margin:1px 0}.coupon{border-radius:21px;overflow:hidden;border:1px solid var(--line);box-shadow:0 10px 25px #063d2814}.coupon-product{display:flex;gap:12px;align-items:center;background:var(--green);color:#fff;padding:16px 19px}.coupon-product span{font-size:29px}.coupon-product small,.coupon-product strong{display:block}.coupon-product small{font-size:11px;color:#c8ead9}.coupon-product strong{font-size:16px}.qr-wrap{padding:22px 0 13px;display:flex;justify-content:center}.qr-wrap #qrcode{padding:8px;border:1px solid var(--line);border-radius:8px;line-height:220px;font-size:14px;text-align:center}.coupon-id{text-align:center;font-size:11px;color:var(--muted);margin:0 0 14px}.coupon-id b{color:var(--ink)}.expiry{margin:0 18px;background:#fff4df;border-radius:13px;display:flex;align-items:center;gap:11px;padding:10px 12px}.expiry small,.expiry strong{display:block}.expiry small{font-size:11px;color:#8a7137}.expiry strong{font-size:20px;color:#8c5e00;line-height:1}.expired{background:#fbe9e7}.expired strong{color:#b83b2c}.coupon-meta{border-top:1px dashed #dce8e1;margin-top:17px;padding:13px 18px;display:flex;justify-content:space-between;color:var(--muted);font-size:11px}.coupon-meta b{color:var(--ink)}.secondary{margin-top:15px;width:100%;border:1px solid var(--green);border-radius:13px;background:white;color:var(--green);padding:12px;font-weight:700}.loading{padding:35px;text-align:center;color:var(--muted);font-size:13px}.spinner{display:inline-block;width:16px;height:16px;border:2px solid #ffffff88;border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle}.spinner.dark{border-color:#c8ddd2;border-top-color:var(--green)}@keyframes spin{to{transform:rotate(360deg)}}#toast{position:fixed;z-index:10;bottom:20px;left:50%;transform:translate(-50%,20px);width:max-content;max-width:calc(100% - 34px);padding:11px 15px;border-radius:10px;background:#263d34;color:#fff;font-size:13px;opacity:0;transition:.2s;pointer-events:none}#toast.show{opacity:1;transform:translate(-50%,0)}@media(max-width:380px){.shell{padding-left:16px;padding-right:16px}.topbar{margin-bottom:22px}}
-/* 1. จัดการรูปภาพในรายการเลือกสินค้า */
-.product-icon {
-  overflow: hidden;
-  padding: 0;
-}
 
-.product-icon img {
+/* 📌 ป้องกันการซูมหน้าจอทุกกรณี */
+html, body {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 14px;
-  display: block;
-}
-
-/* 2. จัดการรูปภาพในหน้ายืนยันสิทธิ์ และ คูปอง QR */
-.selected > img,
-.coupon-product > img {
-  width: 42px;
-  height: 42px;
-  object-fit: cover;
-  border-radius: 10px;
-  flex-shrink: 0;
-}
-
-/* รูปสินค้าที่เลือกหลังสแกน QR */
-.scanned-product {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.scanned-product > img {
-  width: 64px;
-  height: 64px;
-  max-width: 64px;
-  max-height: 64px;
-  object-fit: cover;
-  border-radius: 10px;
-  flex: 0 0 auto;
-}
-
-/* ป้องกันรูปจากข้อมูลภายนอกขยายเกินกรอบของการ์ด */
-#result-container,
-#result-container * {
-  min-width: 0;
-}
-
-#result-container img {
-  display: block;
   max-width: 100%;
-}
-
-/* --- โหมดมืด (Dark Mode) --- */
-body.dark-mode {
-  background-color: #121212;
-  color: #e0e0e0;
-}
-
-body.dark-mode .shell {
-  background-color: #1a1a1a;
-}
-
-body.dark-mode .card,
-body.dark-mode .auth-card,
-body.dark-mode .user-info-card,
-body.dark-mode .product {
-  background-color: #242424;
-  color: #ffffff;
-  border-color: #333333;
-}
-
-body.dark-mode input,
-body.dark-mode select {
-  background-color: #2d2d2d;
-  color: #ffffff;
-  border-color: #444444;
-}
-
-body.dark-mode input::placeholder {
-  color: #888888;
-}
-
-body.dark-mode .topbar {
-  border-bottom-color: #333333;
-}
-
-body.dark-mode .coupon {
-  background-color: #242424;
-  border-color: #333333;
-}
-
-/* สีข้อความรองในโหมดมืด */
-body.dark-mode p,
-body.dark-mode small,
-body.dark-mode .switch {
-  color: #b0b0b0 !important;
-}
-
-/* สีหัวข้อและปุ่มในโหมดมืด */
-body.dark-mode h1, 
-body.dark-mode h2, 
-body.dark-mode h3, 
-body.dark-mode strong {
-  color: #ffffff;
-}
-
-body.dark-mode .secondary {
-  background-color: #333333;
-  color: #ffffff;
-}
-
-/* ธีมเดียวกับ PWA Amazon Client และหน้าจอแบบเปลี่ยนทั้งหน้า */
-html {
   min-height: 100%;
   background: #435f52;
+  overflow-x: hidden;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-bottom: 30vh;
+  overscroll-behavior-y: none;
+}
+
+/* ป้องกัน Double-tap zoom บนปุ่มและลิงก์ */
+button, input, select, textarea, a {
+  touch-action: manipulation;
+}
+
+.coupon-actions {
+  display: grid;
+  grid-template-columns: 1fr 90px;
+  gap: 10px;
+  margin-top: 15px;
+}
+.coupon-actions .secondary {
+  margin: 0;
+}
+.close-coupon {
+  border-radius: 13px;
+  background: #edf2ef;
+  color: #597168;
+  padding: 12px;
+  font-weight: 700;
 }
 
 :root {
@@ -128,27 +45,207 @@ html {
   --gold: #d6a64d;
 }
 
+* {
+  box-sizing: border-box;
+}
+
+/*สีพื้นหลังนอกแอปกรณีจอใหญ่*/
 body {
+  margin: 0;
+  /*background: linear-gradient(160deg, #dce9df 0%, #bfd5c4 52%, #a8c3af 100%);*/
   background: linear-gradient(135deg, rgb(67, 97, 82), rgb(120, 150, 135));
+
   color: var(--ink);
+  font-family: 'Noto Sans Thai', system-ui, sans-serif;
   min-height: 100dvh;
 }
 
+button, input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: 0;
+}
+
+/*สีพื้นหลังในแอปป*/
 #app {
+  width: 100%;
+  max-width: 520px;
+  margin: auto;
   min-height: 100dvh;
   background: rgba(67, 97, 82, .92);
 }
 
+/* Safe Area Inset สำหรับการเปิดแบบ Shortcut / PWA / Web App */
 .shell {
+  padding-top: calc(22px + env(safe-area-inset-top, 0px));
+  padding-left: calc(22px + env(safe-area-inset-left, 0px));
+  padding-right: calc(22px + env(safe-area-inset-right, 0px));
+  padding-bottom: calc(38px + env(safe-area-inset-bottom, 0px));
   min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* ทุกหน้าและกล่องลอยต้องไม่ชนรอยบาก/แถบระบบ เมื่อเปิดเป็น PWA */
+#toast {
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  left: calc(50% + (env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)) / 2);
+}
+
+#pwa-install-guide,
+#pwa-installed-notice {
   padding:
-    calc(22px + env(safe-area-inset-top, 0px))
-    calc(22px + env(safe-area-inset-right, 0px))
-    calc(38px + env(safe-area-inset-bottom, 0px))
-    calc(22px + env(safe-area-inset-left, 0px));
+    calc(20px + env(safe-area-inset-top, 0px))
+    calc(20px + env(safe-area-inset-right, 0px))
+    calc(20px + env(safe-area-inset-bottom, 0px))
+    calc(20px + env(safe-area-inset-left, 0px)) !important;
+}
+
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+  position: relative;
+  min-height: 42px;
+  max-width: 100%;
+}
+
+.topbar-login {
+  min-height: 0;
+  margin-bottom: 0;
+}
+
+.topbar-login + .auth-wrap {
+  padding-top: 0;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  white-space: nowrap;
+  flex: 1;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+.topbar-brand img, .hero-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.topbar-brand span, .login-brand-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.login-brand-name {
+  margin-top: 3px;
+}
+
+.topbar-actions {
+  margin-left: auto;
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.history-action {
+  display: flex;
+  justify-content: center;
+  margin: 22px 0 18px;
+}
+
+.page-title.product-page-title {
+  margin: 16px 0 0;
+}
+
+.page-title.product-page-title h2 {
+  font-size: 16px;
+  font-weight: 400;
+  margin: 0 0 4px;
+}
+
+.product-page-title span {
+  font-size: 12px;
+}
+
+.history-action .secondary {
+  width: auto;
+  margin: 0;
+  padding: 10px 18px;
+  background: #fffaf4;
+  border-color: #8f6544;
+  color: #704128;
+}
+
+.brand-mark, .back {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--green);
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  flex: 0 0 auto;
+}
+
+.back {
+  position: relative;
+  z-index: 1;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #e8f2ea;
+  border-radius: 50%;
+  background: #edf6ef;
+  color: var(--deep);
+  box-shadow: 0 5px 14px #163d2a38;
+  transition: transform .18s, background .18s;
+  font-size: 35px;
+  line-height: 1;
+}
+
+.back:hover {
+  background: #d7eadc;
+  color: #102f20;
+  transform: translateX(-2px);
+}
+
+.back svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.topbar p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.topbar h1 {
+  margin: -3px 0 0;
+  font-size: 19px;
 }
 
 .logout {
+  margin-left: auto;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -162,222 +259,808 @@ body {
   box-shadow: 0 5px 12px #8e3e3040;
 }
 
-.logout:hover { background: #913027; color: #fff; }
-
-.back {
-  width: 42px;
-  height: 42px;
-  border: 1px solid #e8f2ea;
-  border-radius: 50%;
-  background: #edf6ef;
-  color: var(--deep);
-  box-shadow: 0 5px 14px #163d2a38;
-}
-
-.back svg {
-  width: 21px;
-  height: 21px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.4;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.staff-page {
-  min-height: 100dvh;
-  background: rgba(67, 97, 82, .92);
-  color: var(--ink);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-
-/* หน้าแรก Staff: เว้นจากแถบสถานะ/รอยบาก เพื่อไม่ให้โลโก้ถูกทับ */
-.staff-main-shell {
-  padding-top: calc(24px + env(safe-area-inset-top, 0px)) !important;
-  padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
-}
-
-/* เฉพาะหน้าจัดการข้อมูลสมาชิก: ใช้ความกว้างเต็มจอสำหรับตารางและข้อมูล */
-#app.member-management-screen {
-  max-width: none;
-  margin: 0;
-}
-
-#app.member-management-screen #house-modal,
-#app.member-management-screen #sales-report-modal {
-  width: 100%;
-  min-height: 100dvh;
-}
-
-#house-modal > div[style*="max-width"],
-#sales-report-modal > main {
-  max-width: none !important;
-  padding: 16px clamp(16px, 3vw, 48px) 32px !important;
-}
-
-.staff-page-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: calc(14px + env(safe-area-inset-top, 0px)) 16px 14px;
-  background: #fffaf4;
-  border-bottom: 1px solid var(--line);
-}
-
-/* ส่วนหัวของหน้าจัดการสมาชิกใช้ inline style จึงกำหนด Safe Area ไว้ตรงนี้ */
-.staff-page > div:first-child {
-  padding-top: calc(1rem + env(safe-area-inset-top, 0px)) !important;
-  padding-left: calc(1rem + env(safe-area-inset-left, 0px)) !important;
-  padding-right: calc(1rem + env(safe-area-inset-right, 0px)) !important;
-}
-
-/* ปุ่ม/ข้อความลอยและกล่องยืนยันทุกชนิดต้องไม่อยู่ใต้แถบระบบ */
-#toast {
-  bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
-  left: calc(50% + (env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)) / 2) !important;
-}
-
-.staff-main-actions {
-  position: fixed;
-  left: calc(10px + env(safe-area-inset-left, 0px));
-  right: calc(10px + env(safe-area-inset-right, 0px));
-  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: center;
-  gap: 6px;
-  z-index: 1000;
-  pointer-events: none;
-}
-
-#btn-manage-member,
-#btn-sales-report,
-#btn-test-print {
-  grid-row: 1;
-  position: static !important;
-  right: auto !important;
-  bottom: auto !important;
-  left: auto !important;
-  transform: none !important;
-  height: 52px !important;
-  min-height: 52px;
-  padding-block: 0 !important;
-  max-width: calc(100% - 4px);
-  box-sizing: border-box;
-  justify-self: center;
-  align-self: center;
-  white-space: nowrap;
-  min-width: 0;
-  overflow: hidden;
-  pointer-events: auto;
-}
-
-#btn-manage-member {
-  grid-column: 1;
-  width: min(52px, calc(100% - 4px)) !important;
-}
-
-#btn-sales-report {
-  grid-column: 2;
-  width: auto;
-  padding-inline: 12px !important;
-  font-size: clamp(.76rem, 3.5vw, .9rem) !important;
-}
-
-#btn-test-print {
-  grid-column: 3;
-  width: auto;
-  padding-inline: 12px !important;
-  font-size: clamp(.68rem, 3.05vw, .9rem) !important;
-}
-
-#pwa-install-guide,
-#pwa-installed-notice,
-#printer-settings-dialog,
-#admin-login-dialog {
-  padding:
-    calc(20px + env(safe-area-inset-top, 0px))
-    calc(20px + env(safe-area-inset-right, 0px))
-    calc(20px + env(safe-area-inset-bottom, 0px))
-    calc(20px + env(safe-area-inset-left, 0px)) !important;
-}
-
-/* กล่องเข้าสู่ระบบผู้ดูแล: เลื่อนภายในกล่องและใช้ระยะจากคีย์บอร์ดให้น้อยลง */
-#admin-login-dialog {
-  align-items: center !important;
-  overflow-y: auto;
-}
-
-#admin-login-form input {
-  scroll-margin-block: 8px 12vh;
-}
-
-.staff-page-header h3 {
-  margin: 0;
-  color: var(--ink);
-  font-size: 1.1rem;
-}
-
-.airprint-receipt {
-  width: min(100%, 360px);
-  margin: 24px auto 0;
-  padding: 24px;
-  background: #fff;
-  color: #111;
-  border-radius: 14px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, .14);
-  font-size: 14px;
-}
-
-.airprint-receipt h1, .airprint-receipt > p:first-of-type, .airprint-thanks {
-  text-align: center;
-}
-
-.airprint-receipt h1 { margin: 0; font-size: 19px; }
-.airprint-receipt hr { border: 0; border-top: 1px dashed #999; margin: 14px 0; }
-.airprint-receipt p { margin: 7px 0; }
-.airprint-receipt .airprint-date { text-align: center; font-size: 12px; }
-.airprint-receipt .airprint-row { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; }
-.airprint-receipt .airprint-row span:last-child { text-align: right; }
-.airprint-receipt .airprint-product { font-weight: 700; font-size: 16px; }
-
-.airprint-actions {
-  width: min(100% - 32px, 360px);
-  margin: 18px auto 28px;
-  text-align: center;
+.logout:hover {
+  background: #913027;
   color: #fff;
 }
 
-.airprint-actions .secondary { background: #fff; }
-
-@page { size: 58mm auto; margin: 0; }
-
-@media print {
-  body, #app, .staff-page { background: #fff !important; min-height: auto; }
-  .staff-page-header, .airprint-actions { display: none !important; }
-  .airprint-receipt { width: 58mm; margin: 0 auto; padding: 0; border: 0; border-radius: 0; box-shadow: none; font-size: 11px; }
-  .airprint-receipt h1 { font-size: 15px; }
-  .airprint-receipt .airprint-product { font-size: 13px; }
-  body:has(#sales-report-print-dialog) > *:not(#sales-report-print-dialog) { display: none !important; }
-  #sales-report-print-dialog { position: static !important; display: block !important; padding: 0 !important; background: #fff !important; }
-  #sales-report-print-dialog > section { width: 58mm !important; margin: 0 !important; padding: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
-  #sales-report-print-dialog main { padding: 0 !important; overflow: visible !important; }
-  #sales-report-print-dialog h2, #sales-report-print-dialog > section > p, .sales-report-print-actions { display: none !important; }
-  #sales-report-print-paper { width: 58mm !important; max-width: none !important; margin: 0 !important; padding: 3mm !important; box-shadow: none !important; }
+.demo-note {
+  background: #fff8e5;
+  color: #765b19;
+  border-radius: 10px;
+  padding: 8px 11px;
+  font-size: 11px;
+  margin: -19px 0 20px;
 }
 
-/* รองรับคีย์บอร์ดมือถือในฟอร์ม Staff */
-html, body {
-  scroll-padding-bottom: 30vh;
+.demo-note code {
+  font-family: monospace;
+}
+
+.auth-wrap {
+  padding-top: 25px;
+}
+
+/* หน้าเปลี่ยนรหัสผ่านครั้งแรก: ใช้โทนม่วงให้แยกจากสีเขียวหลัก */
+.first-password-shell {
+  background: linear-gradient(160deg, #4c1d95 0%, #6d28d9 52%, #8b5cf6 100%);
+}
+
+.first-password-shell .hero-icon {
+  background: #f3e8ff;
+  color: #6b21a8;
+  box-shadow: 0 8px 24px rgba(46, 16, 101, .28);
+}
+
+.first-password-shell .auth-card {
+  border: 2px solid #c4b5fd;
+  background: #fdfaff;
+  box-shadow: 0 14px 34px rgba(46, 16, 101, .26);
+}
+
+.first-password-shell input:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, .18);
+}
+
+.first-password-shell .primary {
+  background: #7c3aed;
+}
+
+.first-password-shell .password-toggle {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.hero {
+  text-align: center;
+  padding: 5px 20px 28px;
+}
+
+.hero-icon {
+  width: 65px;
+  height: 65px;
+  background: var(--mint);
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  color: var(--green);
+  font-size: 32px;
+  margin: auto;
+}
+
+.hero h2 {
+  font-size: 25px;
+  line-height: 1.35;
+  margin: 18px 0 8px;
+}
+
+.hero p, .page-title span {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ข้อความที่วางอยู่บนพื้นหลังแอปสีเขียว */
+.login-brand-name,
+.hero h2,
+.hero p,
+.page-title h2,
+.page-title p,
+.page-title span,
+.coupon-head h2,
+.coupon-head p,
+.loading {
+  color: #fff;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 8px 24px #0a3c2510;
+}
+
+.auth-card {
+  display: grid;
+  gap: 15px;
+}
+
+.password-input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-wrap input {
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 48px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 9px;
+  background: #eef6f1;
+  color: var(--green);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.password-toggle:focus-visible {
+  outline: 3px solid #0a704238;
+}
+
+/* Username/Password: เหลือระยะกันคีย์บอร์ดเพียงพอดี ไม่เลื่อนฟอร์มจนขาด */
+#auth-form input {
+  scroll-margin-block: 8px 12vh;
+}
+
+label {
+  display: grid;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* 📌 ปรับ font-size เป็นอย่างน้อย 16px เพื่อบล็อก iOS Auto-Zoom */
+input, select, textarea {
+  border: 1px solid #d6e2db;
+  border-radius: 11px;
+  padding: 12px 13px;
+  color: var(--ink);
+  outline: none;
+  font-size: 16px !important;
+  scroll-margin-block: 16px 30vh;
+}
+
+input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px #0a70421c;
+}
+
+.primary {
+  margin-top: 4px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+  background: var(--green);
+  color: white;
+  border-radius: 13px;
+  padding: 13px;
+  font-weight: 700;
+}
+
+.primary span {
+  font-size: 20px;
+}
+
+.primary:disabled {
+  opacity: .7;
+}
+
+.switch {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0;
+}
+
+.switch button {
+  padding: 0;
+  background: none;
+  color: var(--green);
+  font-weight: 700;
+}
+
+.welcome {
+  padding: 13px 0 23px;
+}
+
+.welcome p {
+  margin: 0;
+  color: var(--green);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.welcome h2 {
+  margin: 3px 0;
+  font-size: 25px;
+}
+
+.menu-card {
+  width: 100%;
+  display: flex;
+  text-align: left;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 19px;
+  background: linear-gradient(135deg, #08704e, #04523a);
+  color: #fff;
+  box-shadow: 0 12px 22px #075a4130;
+}
+
+.menu-icon {
+  background: #ffffff22;
+  border-radius: 14px;
+  width: 49px;
+  height: 49px;
+  display: grid;
+  place-items: center;
+  font-size: 26px;
+}
+
+.menu-card strong, .menu-card small {
+  display: block;
+}
+
+.menu-card strong {
+  font-size: 18px;
+}
+
+.menu-card small {
+  margin-top: 2px;
+  color: #d7f1e4;
+  font-size: 12px;
+}
+
+.menu-card b {
+  margin-left: auto;
+  font-size: 25px;
+}
+
+.hint {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  margin: 20px;
+}
+
+.page-title {
+  margin: -3px 0 23px;
+}
+
+.page-title p {
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.page-title h2 {
+  font-size: 23px;
+  margin: 4px 0;
+}
+
+.product-list {
+  display: grid;
+  gap: 12px;
+}
+
+/* หน้าสินค้า: ลดพื้นที่แนวตั้งให้ข้อมูลผู้ใช้และรายการอยู่ในจอเดียวได้มากขึ้น */
+.product-selection-screen .product-user-info {
+  padding: 12px 14px;
+  border-radius: 16px;
+}
+
+.product-user-info-main {
+  margin: 0;
+}
+
+.product-user-info-main p,
+.product-user-info-usage,
+.product-user-info-period,
+.product-user-info-warning {
+  margin: 0;
+  line-height: 1.35;
+}
+
+.product-user-info-main p + p {
+  margin-top: 2px;
+}
+
+.product-user-info-usage {
+  margin-top: 6px;
+}
+
+.product-user-info-period,
+.product-user-info-warning {
+  margin-top: 3px;
+}
+
+.product-selection-screen .product-page-title {
+  margin: 10px 0 6px;
+}
+
+.product-selection-screen .product-page-title h2 {
+  font-size: 15px;
+}
+
+.product-selection-screen .product-list {
+  gap: 8px;
+}
+
+.product-selection-screen .product {
+  min-height: 62px;
+  padding: 9px 11px;
+  gap: 10px;
+}
+
+.product-selection-screen .product-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  font-size: 24px;
+}
+
+.product-selection-screen .product-icon img {
+  border-radius: 11px;
+}
+
+.product-selection-screen .history-action {
+  margin-top: 10px;
+}
+
+.product {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  padding: 14px;
+  text-align: left;
+}
+
+.product:hover {
+  border-color: var(--green);
+  background: #fbfefc;
+}
+
+.product-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  overflow: hidden;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.product-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 14px;
+  display: block;
+}
+
+.gold {
+  background: #fff7df;
+}
+
+.orange {
+  background: #fff0e7;
+}
+
+.green {
+  background: #e3f6ed;
+}
+
+.product strong, .product small {
+  display: block;
+}
+
+.product strong {
+  font-size: 15px;
+}
+
+.product small {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.product i {
+  font-style: normal;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 700;
+  margin-left: auto;
+}
+
+.selected {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 15px;
+  background: #f1faf5;
+  border-color: #cde7d7;
+}
+
+.selected > span {
+  font-size: 31px;
+}
+
+.selected strong, .selected small, .selected em {
+  display: block;
+}
+
+.selected small, .selected em {
+  font-size: 12px;
+  color: var(--muted);
+  font-style: normal;
+}
+
+.selected strong {
+  font-size: 16px;
+}
+
+.selected > img,
+.coupon-product > img {
+  width: 256px;
+  height: 256px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.product-confirm {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  padding: 24px;
+  text-align: center;
+  background: #fffaf4;
+}
+
+.product-confirm > div {
+  display: grid;
+  gap: 5px;
+}
+
+.product-confirm strong {
+  font-size: 20px;
+}
+
+.product-confirm > .confirm-product-image,
+.product-confirm > .confirm-product-fallback {
+  width: 100%;
+  max-width: 200px;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 12px 25px #5f382126;
+}
+
+.confirm-product-fallback {
+  display: grid;
+  place-items: center;
+  background: #ead6be;
+  font-size: 72px;
+}
+
+.confirmation-action {
+  padding: 14px;
+}
+
+.coupon-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.close-coupon {
+  width: min(100%, 180px);
+  margin: 0;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: #b63f35;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 8px 16px #b63f3530;
+}
+
+.close-coupon:hover {
+  background: #913027;
+}
+
+.details {
+  display: grid;
+  gap: 15px;
+}
+
+.privacy {
+  background: #f7faf8;
+  margin: 0;
+  padding: 9px;
+  border-radius: 9px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.coupon-head {
+  text-align: center;
+  margin: 0 0 17px;
+}
+
+.success {
+  margin: auto;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #dbf5e7;
+  color: var(--green);
+  display: grid;
+  place-items: center;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.coupon-head p {
+  font-size: 13px;
+  color: #fff;
+  font-weight: 700;
+  margin: 8px 0 0;
+}
+
+.coupon-head h2 {
+  font-size: 19px;
+  margin: 1px 0;
+}
+
+.coupon {
+  height: auto !important;
+  min-height: 0 !important;
+  align-self: start;
+  border-radius: 21px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #fff;
+  box-shadow: 0 10px 25px #063d2814;
+}
+
+.coupon-product {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: var(--green);
+  color: #fff;
+  padding: 16px 19px;
+}
+
+.coupon-product span {
+  font-size: 29px;
+}
+
+.coupon-product small, .coupon-product strong {
+  display: block;
+}
+
+.coupon-product small {
+  font-size: 11px;
+  color: #c8ead9;
+}
+
+.coupon-product strong {
+  font-size: 16px;
+}
+
+.qr-wrap {
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 22px 12px 13px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+}
+
+.qr-wrap #qrcode {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  font-size: 0;
+  text-align: center;
+  overflow: hidden;
+}
+
+.qr-wrap #qrcode canvas,
+.qr-wrap #qrcode img {
+  display: block;
+  width: var(--qr-size, 260px) !important;
+  max-width: none;
+  height: var(--qr-size, 260px) !important;
+  max-height: none;
+  object-fit: contain;
+}
+
+.coupon-id {
+  text-align: center;
+  font-size: 11px;
+  color: #111;
+  margin: 0;
+  padding: 0 16px 18px;
+}
+
+.coupon-id b {
+  color: #111;
+}
+
+.expiry {
+  margin: 0 18px;
+  background: #fff4df;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+}
+
+/* กล่องนับถอยหลังแยกจากพื้นที่ QR */
+.coupon-expiry {
+  margin-top: 14px;
 }
 
 .expiry span {
   font-size: 22px;
 }
 
-input, textarea, select {
-  scroll-margin-block: 16px 30vh;
+.expiry small, .expiry strong {
+  display: block;
+}
+
+.expiry small {
+  font-size: 11px;
+  color: #8a7137;
+}
+
+.expiry strong {
+  font-size: 20px;
+  color: #8c5e00;
+  line-height: 1;
+}
+
+.expired {
+  background: #fbe9e7;
+}
+
+.expired strong {
+  color: #b83b2c;
+}
+
+.coupon-meta {
+  border-top: 1px dashed #dce8e1;
+  margin-top: 17px;
+  padding: 13px 18px;
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.coupon-meta b {
+  color: var(--ink);
+}
+
+.secondary {
+  margin-top: 15px;
+  width: 100%;
+  border: 1px solid var(--green);
+  border-radius: 13px;
+  background: white;
+  color: var(--green);
+  padding: 12px;
+  font-weight: 700;
+}
+
+.loading {
+  padding: 35px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  position: relative;
+}
+
+.loading::after {
+  content: '';
+  display: block;
+  width: min(180px, 70%);
+  height: 6px;
+  margin: 15px auto 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #d7e9df 25%, var(--green) 45%, #d7e9df 65%);
+  background-size: 220% 100%;
+  animation: loading-progress 1.1s ease-in-out infinite;
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ffffff88;
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  vertical-align: middle;
+}
+
+.spinner.dark {
+  border-color: #c8ddd2;
+  border-top-color: var(--green);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loading-progress {
+  from { background-position: 100% 0; }
+  to { background-position: -120% 0; }
+}
+
+#toast {
+  position: fixed;
+  z-index: 10;
+  bottom: 20px;
+  left: 50%;
+  transform: translate(-50%, 20px);
+  width: max-content;
+  max-width: calc(100% - 34px);
+  padding: 11px 15px;
+  border-radius: 10px;
+  background: #263d34;
+  color: #fff;
+  font-size: 13px;
+  opacity: 0;
+  transition: .2s;
+  pointer-events: none;
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media(max-width: 380px) {
+  .topbar {
+    margin-bottom: 22px;
+  }
+}
+
+@media (max-width: 420px) {
+  .shell {
+    padding-left: calc(16px + env(safe-area-inset-left, 0px));
+    padding-right: calc(16px + env(safe-area-inset-right, 0px));
+  }
+  .card, .product, input {
+    max-width: 100%;
+  }
+  .topbar-brand span {
+    font-size: 18px;
+  }
 }

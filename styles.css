@@ -551,6 +551,70 @@ input:focus {
   gap: 12px;
 }
 
+/* หน้าสินค้า: ลดพื้นที่แนวตั้งให้ข้อมูลผู้ใช้และรายการอยู่ในจอเดียวได้มากขึ้น */
+.product-selection-screen .product-user-info {
+  padding: 12px 14px;
+  border-radius: 16px;
+}
+
+.product-user-info-main {
+  margin: 0;
+}
+
+.product-user-info-main p,
+.product-user-info-usage,
+.product-user-info-period,
+.product-user-info-warning {
+  margin: 0;
+  line-height: 1.35;
+}
+
+.product-user-info-main p + p {
+  margin-top: 2px;
+}
+
+.product-user-info-usage {
+  margin-top: 6px;
+}
+
+.product-user-info-period,
+.product-user-info-warning {
+  margin-top: 3px;
+}
+
+.product-selection-screen .product-page-title {
+  margin: 10px 0 6px;
+}
+
+.product-selection-screen .product-page-title h2 {
+  font-size: 15px;
+}
+
+.product-selection-screen .product-list {
+  gap: 8px;
+}
+
+.product-selection-screen .product {
+  min-height: 62px;
+  padding: 9px 11px;
+  gap: 10px;
+}
+
+.product-selection-screen .product-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  font-size: 24px;
+}
+
+.product-selection-screen .product-icon img {
+  border-radius: 11px;
+}
+
+.product-selection-screen .history-action {
+  margin-top: 10px;
+}
+
 .product {
   display: flex;
   align-items: center;

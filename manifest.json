@@ -1,6 +1,6 @@
 {
-  "short_name": "D Wallet",
-  "name": "D Wallet",
+  "short_name": "D Coupon",
+  "name": "D Coupon",
   "id": "./",
   "start_url": "./",
   "scope": "./",
@@ -23,6 +23,6 @@
     }
   ],
   "shortcuts": [
-    { "name": "เข้าสู่ระบบ D Wallet", "short_name": "D Wallet", "url": "./" }
+    { "name": "เข้าสู่ระบบ D Coupon", "short_name": "D Coupon", "url": "./" }
   ]
 }

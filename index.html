@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>D Wallet</title>
+    <title>D Coupon</title>
     
     <meta name="description" content="ระบบรับสิทธิ์และคูปองดิจิทัล" />
     <meta name="theme-color" content="#435f52" />
@@ -15,7 +15,7 @@
     <!-- iOS Safari Support -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="D Wallet" />
+    <meta name="apple-mobile-web-app-title" content="D Coupon" />
     <link rel="apple-touch-icon" href="public/assets/image/icon-192.png?v=3" />
 
     <!-- Google Fonts (Noto Sans Thai & Sarabun) -->
@@ -48,7 +48,7 @@
     <script src="config.js?v=9"></script>
     <script src="d1-client.js?v=3"></script>
     <script src="api.js?v=28"></script>
-    <script src="app.js?v=56"></script>
+    <script src="app.js?v=57"></script>
 
     <!-- 📌 PWA Service Worker & Install Prompt Handler (ไว้ท้ายสุดจุดเดียว) -->
     <script>
@@ -93,7 +93,7 @@
 
     window.addEventListener('appinstalled', () => {
       deferredInstallPrompt = null;
-      console.log('ติดตั้ง D Wallet สำเร็จ');
+      console.log('ติดตั้ง D Coupon สำเร็จ');
       window.dispatchEvent(new Event('pwa-installed'));
     });
     </script>

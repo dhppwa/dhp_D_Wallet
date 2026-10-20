@@ -491,19 +491,19 @@ async function renderProducts() {
     const customerDetailLine = [customerDetail, customerRemark].filter(value => value && value !== '-').join('  ') || '-';
 
     const userInfoHtml = `
-      <div class="card user-info-card" style="padding: 1rem;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+      <div class="card user-info-card product-user-info">
+        <div class="product-user-info-main">
           <div>
             <p><strong>ยินดีต้อนรับ</strong> ${esc(user.name || user.Name || '-')}</p>
             <p><strong>เบอร์โทร:</strong> ${esc(userPhone || '-')}</p>
             <p style="white-space:pre-wrap;">${esc(customerDetailLine)}</p>
           </div>
         </div>
-        <p style="margin-top: 0.5rem; color: #059669; font-weight: bold;">
+        <p class="product-user-info-usage" style="color: #059669; font-weight: bold;">
           สิทธิ์ทั้งหมด: ${usageStatus.unlimitedAll ? 'ไม่กำหนด' : `${usedCount}/${allLimitDisplay} สิทธิ์`}
         </p>
-        <p style="margin-top:0.25rem; color:#475569; font-weight:600;">ใช้ได้ ${usageStatus.periodLimit} สิทธิ์ / ${usageStatus.periodLabel} (ใช้แล้ว ${usageStatus.periodUsed})</p>
-        ${usageStatus.blocked ? `<p style="margin-top:0.25rem; color:#ef4444; font-size:0.875rem; font-weight:bold;">⚠️ ${esc(usageStatus.reason)}</p>` : ''}
+        <p class="product-user-info-period" style="color:#475569; font-weight:600;">ใช้ได้ ${usageStatus.periodLimit} สิทธิ์ / ${usageStatus.periodLabel} (ใช้แล้ว ${usageStatus.periodUsed})</p>
+        ${usageStatus.blocked ? `<p class="product-user-info-warning" style="color:#ef4444; font-size:0.82rem; font-weight:bold;">⚠️ ${esc(usageStatus.reason)}</p>` : ''}
       </div>
     `;
 
@@ -526,7 +526,7 @@ async function renderProducts() {
       </div>
     `;
 
-    layout(`${userInfoHtml}<div class="page-title product-page-title"><h2>เลือกรายการสินค้า</h2></div>${productListHtml}${historyActionHtml}`, false);
+    layout(`<div class="product-selection-screen">${userInfoHtml}<div class="page-title product-page-title"><h2>เลือกรายการสินค้า</h2></div>${productListHtml}${historyActionHtml}</div>`, false);
     
     document.querySelector('#btn-history')?.addEventListener('click', () => renderHistory());
 

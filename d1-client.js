@@ -5,12 +5,17 @@
     for (const field of BOOLEAN_FIELDS) if (field in row) row[field] = Boolean(row[field]);
     return row;
   };
+
   async function request(payload, options = {}) {
-    const response = await fetch(`${window.API_BASE_URL}/db`, { method: 'POST', keepalive: Boolean(options.keepalive), headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
+    const response = await fetch(`${window.API_BASE_URL}/db`, {
+      method: 'POST', keepalive: Boolean(options.keepalive),
+      headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload)
+    });
     const result = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
     return (result.data || []).map(normalize);
   }
+
   class Query {
     constructor(table) { this.payload = { table, action: 'select', select: '*', filters: [], orFilters: [] }; this.one = false; }
     select(columns = '*') { this.payload.select = columns; return this; }
@@ -24,13 +29,27 @@
     lte(column, value) { this.payload.filters.push({ column, op: 'lte', value }); return this; }
     lt(column, value) { this.payload.filters.push({ column, op: 'lt', value }); return this; }
     like(column, value) { this.payload.filters.push({ column, op: 'like', value }); return this; }
-    or(expression) { this.payload.orFilters = String(expression).split(',').map(part => { const [column, op, ...rest] = part.split('.'); let value = rest.join('.'); if (op === 'is') value = value === 'null' ? null : value === 'true'; return { column, op, value }; }); return this; }
+    or(expression) {
+      this.payload.orFilters = String(expression).split(',').map(part => {
+        const [column, op, ...rest] = part.split('.');
+        let value = rest.join('.');
+        if (op === 'is') value = value === 'null' ? null : value === 'true';
+        return { column, op, value };
+      });
+      return this;
+    }
     order(column, options = {}) { this.payload.order = { column, ascending: options.ascending !== false }; return this; }
     limit(value) { this.payload.limit = value; return this; }
     maybeSingle() { this.one = true; return this.execute(); }
     then(resolve, reject) { return this.execute().then(resolve, reject); }
-    async execute() { try { const rows = await request(this.payload); return { data: this.one ? (rows[0] || null) : rows, error: null }; } catch (error) { return { data: null, error: { message: error.message } }; } }
+    async execute() {
+      try {
+        const rows = await request(this.payload);
+        return { data: this.one ? (rows[0] || null) : rows, error: null };
+      } catch (error) { return { data: null, error: { message: error.message } }; }
+    }
   }
+
   window.createD1Client = () => ({ from: table => new Query(table) });
   window.d1Request = request;
 })();

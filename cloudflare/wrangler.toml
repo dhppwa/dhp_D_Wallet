@@ -1,0 +1,8 @@
+name = "pwa-amazon-api"
+main = "worker.js"
+compatibility_date = "2026-09-30"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "pwa-amazon-db"
+database_id = "43140498-9b92-44cc-b1e8-d973c91d4158"

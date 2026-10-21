@@ -121,16 +121,23 @@ async function getUsageLimitStatus(phone) {
   if (billErr) throw new Error(`ตรวจสอบจำนวนการใช้สิทธิ์ไม่สำเร็จ: ${billErr.message}`);
 
   const periodUsed = (bills || []).length;
-  const totalBlocked = !unlimitedAll && allLimit > 0 && usedCount >= allLimit;
-  const periodBlocked = periodLimit > 0 && periodUsed >= periodLimit;
-  const reason = totalBlocked
-    ? `คุณใช้สิทธิ์ครบทั้งหมด ${allLimit} สิทธิ์แล้ว`
-    : periodBlocked
-      ? `คุณใช้สิทธิ์ครบ ${periodLimit} สิทธิ์ต่อ${period.label}แล้ว`
-      : '';
+
+  // LimitAll = ไม่จำกัด: ข้ามทั้งเพดานสิทธิ์สะสมและเพดานตามวัน/เดือน/ปี
+  // หากเป็นแบบจำกัด ต้องมีค่าทั้งสองส่วนมากกว่า 0 เสมอ (ค่าผิดปกติจะไม่อนุญาตให้ใช้สิทธิ์)
+  const invalidTotalLimit = !unlimitedAll && (!Number.isFinite(allLimit) || allLimit <= 0);
+  const invalidPeriodLimit = !unlimitedAll && (!Number.isFinite(periodLimit) || periodLimit <= 0);
+  const totalBlocked = !unlimitedAll && !invalidTotalLimit && usedCount >= allLimit;
+  const periodBlocked = !unlimitedAll && !invalidPeriodLimit && periodUsed >= periodLimit;
+  const reason = invalidTotalLimit || invalidPeriodLimit
+    ? 'ข้อมูลการจำกัดสิทธิ์ไม่ถูกต้อง กรุณาติดต่อผู้ดูแลระบบ'
+    : totalBlocked
+      ? `คุณใช้สิทธิ์ครบทั้งหมด ${allLimit} สิทธิ์แล้ว`
+      : periodBlocked
+        ? `คุณใช้สิทธิ์ครบ ${periodLimit} สิทธิ์ต่อ${period.label}แล้ว`
+        : '';
 
   return {
-    blocked: totalBlocked || periodBlocked,
+    blocked: invalidTotalLimit || invalidPeriodLimit || totalBlocked || periodBlocked,
     reason,
     usedCount,
     allLimit,

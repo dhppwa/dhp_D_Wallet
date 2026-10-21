@@ -543,7 +543,7 @@ async function renderProducts() {
       : { blocked: false, usedCount: Number(user.All_Use ?? 0), allLimit: Number(user.All_Limit ?? 0), unlimitedAll: Boolean(user.LimitAll), periodUsed: 0, periodLimit: Number(user.Day_Limit ?? 0), periodLabel: ['วัน', 'เดือน', 'ปี'][Number(user.LimitType ?? 0)] || 'วัน', reason: '' };
 
     const usedCount = usageStatus.usedCount;
-    const allLimitDisplay = usageStatus.unlimitedAll ? 'ไม่กำหนด' : usageStatus.allLimit;
+    const allLimitDisplay = usageStatus.allLimit;
     const customerDetail = String(user.address || user.Detail || '').trim();
     const customerRemark = String(user.project || user.Remark || '').trim();
     const customerDetailLine = [customerDetail, customerRemark].filter(value => value && value !== '-').join('  ') || '-';
@@ -558,9 +558,9 @@ async function renderProducts() {
           </div>
         </div>
         <p class="product-user-info-usage" style="color: #059669; font-weight: bold;">
-          สิทธิ์ทั้งหมด: ${usageStatus.unlimitedAll ? 'ไม่กำหนด' : `${usedCount}/${allLimitDisplay} สิทธิ์`}
+          ${usageStatus.unlimitedAll ? 'สิทธิ์ไม่จำกัด' : `สิทธิ์ทั้งหมด: ${usedCount}/${allLimitDisplay} สิทธิ์`}
         </p>
-        <p class="product-user-info-period" style="color:#475569; font-weight:600;">ใช้ได้ ${usageStatus.periodLimit} สิทธิ์ / ${usageStatus.periodLabel} (ใช้แล้ว ${usageStatus.periodUsed})</p>
+        ${usageStatus.unlimitedAll ? '' : `<p class="product-user-info-period" style="color:#475569; font-weight:600;">ใช้ได้ ${usageStatus.periodLimit} สิทธิ์ / ${usageStatus.periodLabel} (ใช้แล้ว ${usageStatus.periodUsed})</p>`}
         ${usageStatus.blocked ? `<p class="product-user-info-warning" style="color:#ef4444; font-size:0.82rem; font-weight:bold;">⚠️ ${esc(usageStatus.reason)}</p>` : ''}
       </div>
     `;

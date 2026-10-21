@@ -66,6 +66,27 @@ body.auth-login-page {
   background: linear-gradient(135deg, #071d3b 0%, #0b376d 52%, #29699b 100%);
 }
 
+/* iOS PWA: ให้พื้นหลังต่อเนื่องใต้ Status bar และ Home Indicator */
+body.auth-login-page #app,
+body.auth-login-page .auth-shell {
+  background: linear-gradient(160deg, #071d3b 0%, #0a3468 52%, #15558f 100%);
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+@supports (-webkit-touch-callout: none) {
+  html.auth-login-page,
+  body.auth-login-page,
+  body.auth-login-page #app,
+  body.auth-login-page .auth-shell {
+    min-height: -webkit-fill-available;
+  }
+
+  body.auth-login-page {
+    background-color: #0b376d;
+  }
+}
+
 button, input {
   font: inherit;
 }
@@ -670,16 +691,16 @@ input:focus {
 .product-selection-screen .history-action .secondary {
   flex: 0 1 auto;
   min-width: 0;
-  padding: 9px 8px;
-  font-size: clamp(11px, 3.1vw, 14px);
-  line-height: 1.25;
+  padding: 12px 10px;
+  font-size: clamp(12px, 3.5vw, 15px);
+  line-height: 1.3;
   white-space: nowrap;
 }
 
 .product-selection-screen .history-action .vip-button-icon {
-  width: 21px;
-  height: 21px;
-  margin: -3px 3px -3px -2px;
+  width: 24px;
+  height: 24px;
+  margin: -4px 4px -4px -2px;
 }
 
 .product {

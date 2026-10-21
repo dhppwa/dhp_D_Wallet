@@ -248,8 +248,10 @@ button {
   margin-left: auto;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 9px 13px;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
   border: 1px solid #9e3027;
   border-radius: 999px;
   background: #b63f35;

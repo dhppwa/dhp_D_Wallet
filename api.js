@@ -288,7 +288,7 @@ async login({ loginId, phone, password }) {
     if (!cleanPhone) throw new Error('ไม่พบเบอร์โทรศัพท์ของผู้ใช้งาน');
     const { data, error } = await getSupabase()
       .from('Cafe_Amazon_Promosion_House')
-      .select('ID, Phone_No, Name, Detail, Remark, All_Use, All_Limit, Day_Limit, LimitAll, LimitType, Access_Level, Username, LoginType, Email')
+      .select('ID, Phone_No, Name, Detail, Remark, All_Use, All_Limit, Day_Limit, LimitAll, LimitType, Access_Level, IsUse, Username, LoginType, Email')
       .eq('Phone_No', cleanPhone)
       .maybeSingle();
     if (error) throw new Error(`ไม่สามารถดึงข้อมูลสมาชิกล่าสุด: ${error.message}`);
@@ -311,6 +311,8 @@ async login({ loginId, phone, password }) {
       LimitAll: Boolean(data.LimitAll),
       LimitType: Number(data.LimitType ?? 0),
       Access_Level: Number(data.Access_Level ?? 0),
+      isUse: Boolean(data.IsUse),
+      IsUse: Boolean(data.IsUse),
       Username: data.Username || '',
       LoginType: Number(data.LoginType ?? 0),
       Email: data.Email || ''

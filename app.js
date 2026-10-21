@@ -28,6 +28,9 @@ let currentCoupon = null;
 let couponTimer = null;
 let couponChannel = null;
 let currentView = 'auth'; 
+let clientLockoutTimer = null;
+let clientLockoutCheckInProgress = false;
+let clientLockoutHandled = false;
 
 // เมื่อคีย์บอร์ดมือถือเปิด ให้เลื่อนช่องที่กำลังกรอกขึ้นมาอยู่ในพื้นที่ที่มองเห็น
 function keepFocusedFieldVisible() {
@@ -67,6 +70,7 @@ function cleanupSubscriptions() {
 }
 
 async function logoutUser() {
+  stopClientLockoutMonitor();
   clearInterval(couponTimer);
   cleanupSubscriptions();
   if (session?.user) await clearCouponData();
@@ -85,6 +89,53 @@ async function logoutUser() {
   renderAuth();
 }
 
+function stopClientLockoutMonitor() {
+  clearInterval(clientLockoutTimer);
+  clientLockoutTimer = null;
+  clientLockoutCheckInProgress = false;
+}
+
+async function forceClientLockoutLogout() {
+  if (clientLockoutHandled) return;
+  clientLockoutHandled = true;
+  stopClientLockoutMonitor();
+  clearInterval(couponTimer);
+  cleanupSubscriptions();
+  const phone = session?.user?.phone || session?.user?.Phone_No;
+  await clearCouponData(phone);
+  sessionStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem(SESSION_KEY);
+  session = null;
+  currentCoupon = null;
+  renderAuth();
+  showAppDialog('บัญชีนี้ถูกล๊อคเอ้าโดยผู้ดูแลระบบ กรุณาเข้าสู่ระบบใหม่', { title: 'ออกจากระบบ' });
+}
+
+async function checkClientLockout() {
+  if (clientLockoutHandled || clientLockoutCheckInProgress || !session?.user || !window.api?.getMemberProfile) return;
+  const phone = session.user.phone || session.user.Phone_No;
+  if (!phone) return;
+  clientLockoutCheckInProgress = true;
+  try {
+    const latestProfile = await window.api.getMemberProfile(phone);
+    if (latestProfile?.isUse === false) {
+      await forceClientLockoutLogout();
+    }
+  } catch (error) {
+    // ความขัดข้องของเครือข่ายไม่ควรออกจากระบบเอง
+    console.warn('ตรวจสอบสถานะเข้าใช้งานไม่สำเร็จ:', error);
+  } finally {
+    clientLockoutCheckInProgress = false;
+  }
+}
+
+function startClientLockoutMonitor() {
+  stopClientLockoutMonitor();
+  clientLockoutHandled = false;
+  checkClientLockout();
+  clientLockoutTimer = setInterval(checkClientLockout, 2000);
+}
+
 // การสลับแท็บหรือพักแอปชั่วคราวต้องยังถือว่า Login อยู่
 // คืน IsUse เฉพาะ logout, offline, pagehide หรือ beforeunload เท่านั้น
 document.addEventListener('visibilitychange', async () => {
@@ -95,6 +146,8 @@ document.addEventListener('visibilitychange', async () => {
   const phone = session?.user?.phone || session?.user?.Phone_No;
   if (!phone || !window.api?.restoreUserUsage) return;
   try {
+    await checkClientLockout();
+    if (!session?.user) return;
     await window.api.restoreUserUsage(phone);
   } catch (error) {
     console.warn('ไม่สามารถคืนสถานะ IsUse เมื่อกลับเข้าแอป:', error);
@@ -293,20 +346,15 @@ function layout(content, back = false) {
 
   <!-- ฝั่งขวา: ปุ่มออกจากระบบ -->
   <div class="topbar-actions" style="display: flex; align-items: center; gap: 0.5rem;">
-    ${session ? '<button class="logout" id="logout"><span aria-hidden="true">↪</span> ออกจากระบบ</button>' : ''}
+    ${session && !['confirm', 'coupon'].includes(currentView) ? '<button class="logout" id="logout" type="button" aria-label="ออกจากระบบ" title="ออกจากระบบ"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 3v18"/></svg></button>' : ''}
   </div>
 </header>
     ${content}
   </section>`;
   
   document.querySelector('#back')?.addEventListener('click', async () => {
-    if (currentView === 'coupon' && !await showConfirmDialog('ต้องการยกเลิกการแสดง QR และกลับไปหน้าเลือกสินค้าหรือไม่?', {
-      title: 'ยกเลิกคูปอง',
-      confirmLabel: 'ยืนยันกลับ',
-      cancelLabel: 'แสดง QR ต่อ'
-    })) {
-      return;
-    }
+    // หน้า QR: ปุ่มกลับมีความหมายเท่ากับยกเลิกคูปอง จึงดำเนินการทันที
+    // เพื่อให้กลับไปเลือกสินค้าได้โดยไม่ต้องยืนยันซ้ำ
     if (['confirm', 'coupon', 'history'].includes(currentView)) {
       clearInterval(couponTimer);
       cleanupSubscriptions();
@@ -479,6 +527,7 @@ async function renderProducts() {
       saveSession(session);
       user = session.user;
     }
+    startClientLockoutMonitor();
 
     const products = await api.products(session.token);
 
@@ -655,7 +704,7 @@ function renderCoupon() {
 
   layout(`
     <div class="coupon-head">
-      <h2>แสดง QR ให้พนักงานสแกน</h2>
+      <h2>แสดง QR Code ให้พนักงานสแกน</h2>
     </div>
     <section class="coupon">
       <div class="qr-wrap">

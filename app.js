@@ -558,7 +558,7 @@ async function renderProducts() {
       </div>
     `;
 
-    const historyActionHtml = `<div class="history-action"><button id="btn-history" type="button" class="secondary">📜 ประวัติการใช้สิทธิ์</button></div>`;
+    const historyActionHtml = `<div class="history-action"><button id="btn-custom-amount" type="button" class="secondary">💵 ใส่จำนวนเงิน</button><button id="btn-history" type="button" class="secondary">📜 ประวัติการใช้สิทธิ์</button></div>`;
 
     const productListHtml = `
       <div class="product-list">
@@ -571,7 +571,7 @@ async function renderProducts() {
               <strong>${esc(p.name)}</strong>
               <small>${esc(p.detail)}</small>
             </span>
-            <i>${usageStatus.blocked ? 'ใช้สิทธิ์ครบแล้ว' : 'เลือก'}</i>
+            ${usageStatus.blocked ? '<i>ใช้สิทธิ์ครบแล้ว</i>' : ''}
           </button>
         `).join('')}
       </div>
@@ -580,6 +580,13 @@ async function renderProducts() {
     layout(`<div class="product-selection-screen">${userInfoHtml}<div class="page-title product-page-title"><h2>เลือกรายการสินค้า</h2></div>${productListHtml}${historyActionHtml}</div>`, false);
     
     document.querySelector('#btn-history')?.addEventListener('click', () => renderHistory());
+    document.querySelector('#btn-custom-amount')?.addEventListener('click', () => {
+      if (usageStatus.blocked) {
+        showAppDialog(usageStatus.reason, { title: 'ไม่สามารถใช้สิทธิ์ได้' });
+        return;
+      }
+      openCustomAmountDialog();
+    });
 
     document.querySelectorAll('.product').forEach(el => el.onclick = () => {
       if (usageStatus.blocked) {
@@ -596,6 +603,44 @@ async function renderProducts() {
       <button class="primary" onclick="renderProducts()">ลองใหม่อีกครั้ง</button>
     </div>`;
   }
+}
+
+function openCustomAmountDialog() {
+  document.querySelector('#custom-amount-dialog')?.remove();
+  document.body.insertAdjacentHTML('beforeend', `
+    <div id="custom-amount-dialog" style="position:fixed; inset:0; z-index:50000; display:grid; place-items:center; padding:20px; background:rgba(20,40,29,.62);">
+      <form id="custom-amount-form" role="dialog" aria-modal="true" style="width:min(100%,360px); padding:22px; border-radius:18px; background:#fffaf4; color:#2c241d; box-shadow:0 20px 45px rgba(0,0,0,.28);">
+        <h3 style="margin:0 0 8px; color:#14532d;">อาหาร / เครื่องดื่ม</h3>
+        <label for="custom-amount-input" style="display:block; margin:14px 0 7px; font-weight:700;">จำนวนเงิน (บาท)</label>
+        <input id="custom-amount-input" type="number" inputmode="decimal" min="0.01" max="999999.99" step="0.01" required autofocus style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #cbd5e1; border-radius:10px; font-size:1rem;">
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+          <button id="btn-cancel-custom-amount" class="secondary" type="button">ยกเลิก</button>
+          <button class="primary" type="submit">ตกลง</button>
+        </div>
+      </form>
+    </div>`);
+
+  const dialog = document.querySelector('#custom-amount-dialog');
+  const input = document.querySelector('#custom-amount-input');
+  input?.focus();
+  document.querySelector('#btn-cancel-custom-amount')?.addEventListener('click', () => dialog?.remove());
+  document.querySelector('#custom-amount-form')?.addEventListener('submit', event => {
+    event.preventDefault();
+    const amount = Number(input?.value);
+    if (!Number.isFinite(amount) || amount <= 0 || amount > 999999.99) {
+      showAppDialog('กรุณาระบุจำนวนเงินตั้งแต่ 0.01 ถึง 999,999.99 บาท', { title: 'จำนวนเงินไม่ถูกต้อง' });
+      return;
+    }
+    dialog?.remove();
+    renderConfirm({
+      id: 'CUSTOM',
+      name: 'อาหาร / เครื่องดื่ม',
+      detail: `จำนวนเงิน ${amount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} บาท`,
+      icon: '💵',
+      price: amount,
+      customAmount: amount
+    });
+  });
 }
 
 // --- หน้า ประวัติการใช้สิทธิ์ ---
@@ -621,7 +666,7 @@ async function renderHistory() {
 
     const historyRows = historyList.length > 0 
       ? historyList.map((item, index) => {
-        const product = productMap[item.productId] || { name: 'เครื่องดื่ม Cafe Amazon' };
+        const product = productMap[item.productId] || { name: item.productName || 'เครื่องดื่ม Cafe Amazon' };
         
         const imgHtml = product.image 
           ? `<img src="${esc(product.image)}" alt="${esc(product.name)}" style="width:40px; height:40px; object-fit:cover; border-radius:8px; flex-shrink:0;">`
@@ -630,16 +675,16 @@ async function renderHistory() {
         return `
           <tr style="border-bottom: 1px solid #e5e7eb;">
             <td style="padding: 0.75rem 0.25rem; text-align: center; vertical-align: middle;">${index + 1}</td>
-            <td style="padding: 0.75rem 0.5rem; vertical-align: middle;">
-              <div style="display: flex; align-items: center; gap: 10px;">
+            <td style="padding: 0.75rem 0.5rem; text-align: left; vertical-align: middle; font-size: 0.8rem; color: #4b5563; line-height: 1.45;">
+              <div>${esc(item.useDate)}</div>
+              <div style="font-size: 0.72rem; color: #6b7280;">เลขที่บิล: ${esc(item.billNo)}</div>
+            </td>
+            <td style="padding: 0.75rem 0.5rem; text-align: center; vertical-align: middle;">
+              <div style="display: inline-flex; flex-direction: column; align-items: center; gap: 5px; max-width: 92px;">
                 ${imgHtml}
-                <div>
-                  <strong style="font-size: 0.95rem; line-height: 1.2; display: block;">${esc(product.name)}</strong>
-                  <small style="color: #6b7280; font-size: 0.75rem;">เลขที่บิล: ${esc(item.billNo)}</small>
-                </div>
+                <strong style="font-size: 0.8rem; line-height: 1.25; display: block; overflow-wrap: anywhere;">${esc(product.name)}</strong>
               </div>
             </td>
-            <td style="padding: 0.75rem 0.5rem; text-align: right; vertical-align: middle; font-size: 0.8rem; color: #4b5563;">${esc(item.useDate)}</td>
           </tr>
         `;
       }).join('')
@@ -652,8 +697,8 @@ async function renderHistory() {
           <thead>
             <tr style="border-bottom: 2px solid #d1d5db; background: #f3f4f6;">
               <th style="padding: 0.5rem; text-align: center;">ลำดับ</th>
-              <th style="padding: 0.5rem; text-align: left;">รายการสินค้า / เลขที่บิล</th>
-              <th style="padding: 0.5rem; text-align: right;">วันที่-เวลา</th>
+              <th style="padding: 0.5rem; text-align: left;">วันที่-เวลา</th>
+              <th style="padding: 0.5rem; text-align: center;">สินค้า</th>
             </tr>
           </thead>
           <tbody>${historyRows}</tbody>
@@ -682,6 +727,7 @@ function renderConfirm(product) {
     try { 
       currentCoupon = await api.createCoupon({
         productId: product.id,
+        customAmount: product.customAmount,
         phone: user.phone || user.Phone_No,
         address: user.address || user.Detail,
         Confirm_Coupon: false
@@ -720,7 +766,8 @@ function renderCoupon() {
   // ใส่เฉพาะข้อมูลที่ Staff ใช้จริง เพื่อให้ QR เล็ก อ่านได้เร็วและชัดขึ้น
   const payload = JSON.stringify({
     couponId: c.id,
-    productId: c.productId
+    productId: c.productId,
+    customAmount: c.product?.customAmount || null
   });
   if (window.QRCode) {
     const qrElement = document.querySelector('#qrcode');

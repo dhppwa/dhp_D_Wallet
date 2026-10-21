@@ -388,6 +388,7 @@ async login({ loginId, phone, password }) {
     let productId = typeof payload === 'object' ? (payload.productId || payload.id) : payload;
     let phone = typeof payload === 'object' ? payload.phone : null;
     let address = typeof payload === 'object' ? payload.address : '';
+    const customAmount = typeof payload === 'object' ? Number(payload.customAmount) : null;
 
     const cleanPhone = cleanString(phone) || getCurrentUserPhone();
     if (!cleanPhone) throw new Error('ไม่พบเบอร์โทรศัพท์ของผู้ใช้งาน');
@@ -404,7 +405,12 @@ async login({ loginId, phone, password }) {
     const usageStatus = await getUsageLimitStatus(cleanPhone);
     if (usageStatus.blocked) throw new Error(usageStatus.reason);
 
-    const strProductId = String(productId);
+    const isCustomAmount = String(productId).toUpperCase() === 'CUSTOM';
+    if (isCustomAmount && (!Number.isFinite(customAmount) || customAmount <= 0 || customAmount > 999999.99)) {
+      throw new Error('จำนวนเงินไม่ถูกต้อง');
+    }
+    // เก็บยอดเป็นสตางค์ใน Product_ID เพื่อให้ Staff อ่านยอดจริงจากฐานข้อมูลได้ทุกเครื่อง
+    const strProductId = isCustomAmount ? `C-${Math.round(customAmount * 100)}` : String(productId);
     const couponId = `CPN-${strProductId}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
     const finalProductId = isNaN(Number(productId)) ? strProductId : Number(productId);
 
@@ -503,15 +509,15 @@ async login({ loginId, phone, password }) {
 
     const { data: bills, error: billErr } = await supabase
       .from('Cafe_Amazon_Bill')
-      .select('ID, InsertDate, Coupon_No, Bill_No')
+      .select('ID, InsertDate, Coupon_No, Bill_No, Product_Type, ItemDetail')
       .eq('Cafe_Amazon_PK', user.ID)
       .order('InsertDate', { ascending: false });
 
     if (billErr) throw new Error(`ไม่สามารถดึงข้อมูลประวัติได้: ${billErr.message}`);
 
     return (bills || []).map(item => {
-      let productId = '1';
-      if (item.Coupon_No && item.Coupon_No.startsWith('CPN-')) {
+      let productId = item.Product_Type != null ? String(item.Product_Type).replace(/\.0+$/, '') : '1';
+      if (item.Product_Type == null && item.Coupon_No && item.Coupon_No.startsWith('CPN-')) {
         const parts = item.Coupon_No.split('-');
         if (parts.length >= 2) productId = String(parts[1]).replace(/\.0+$/, '');
       }
@@ -521,6 +527,7 @@ async login({ loginId, phone, password }) {
         billNo: item.Bill_No || '-',
         couponNo: item.Coupon_No || '-',
         productId: String(productId),
+        productName: item.ItemDetail || (/^C-\d+$/i.test(String(productId)) ? 'อาหาร / เครื่องดื่ม' : ''),
         useDate: item.InsertDate ? new Date(item.InsertDate).toLocaleString('th-TH', {
           year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
         }) : '-'

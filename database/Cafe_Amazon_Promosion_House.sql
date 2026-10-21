@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS `Cafe_Amazon_Promosion_House` (
   `Confirm_Coupon` TINYINT(1) NOT NULL DEFAULT 0,
   `Coupon_No` VARCHAR(50) NULL DEFAULT NULL,
   `Product_ID` VARCHAR(13) NULL DEFAULT NULL,
+  -- 0=ผู้ใช้งานทั่วไป, 1=VIP, 2=แอดมิน, 3=ทดสอบระบบ
   `Access_Level` INT NOT NULL DEFAULT 0,
   `Username` VARCHAR(255) NULL DEFAULT NULL,
   `LoginType` INT NOT NULL DEFAULT 0,

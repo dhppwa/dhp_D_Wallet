@@ -60,6 +60,11 @@ body {
   min-height: 100dvh;
 }
 
+/* ใช้กับพื้นที่รอบกรอบแอปบนจอใหญ่ เฉพาะหน้าเข้าสู่ระบบ */
+body.auth-login-page {
+  background: linear-gradient(135deg, #071d3b 0%, #0b376d 52%, #29699b 100%);
+}
+
 button, input {
   font: inherit;
 }
@@ -190,6 +195,16 @@ button {
   color: #704128;
 }
 
+.vip-button-icon {
+  width: 27px;
+  height: 27px;
+  object-fit: contain;
+  vertical-align: middle;
+  margin: -5px 5px -5px -4px;
+  background: #000;
+  border-radius: 50%;
+}
+
 .brand-mark, .back {
   width: 38px;
   height: 38px;
@@ -283,6 +298,25 @@ button {
 
 .auth-wrap {
   padding-top: 25px;
+}
+
+/* หน้าเข้าสู่ระบบ: แยกโทนน้ำเงินเข้มจากหน้าหลักสีเขียว */
+.auth-shell {
+  background: linear-gradient(160deg, #071d3b 0%, #0a3468 52%, #15558f 100%);
+}
+
+.auth-shell .auth-card {
+  border-color: #9ec5ed;
+  box-shadow: 0 14px 34px rgba(3, 24, 54, .32);
+}
+
+.auth-shell .primary {
+  background: #0b4f8a;
+}
+
+.auth-shell .password-toggle {
+  background: #e5f1fc;
+  color: #0b4f8a;
 }
 
 /* หน้าเปลี่ยนรหัสผ่านครั้งแรก: ใช้โทนม่วงให้แยกจากสีเขียวหลัก */

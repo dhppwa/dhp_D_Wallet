@@ -220,9 +220,9 @@ async login({ loginId, phone, password }) {
     throw new Error('รหัสผ่านไม่ถูกต้อง');
   }
 
-  // Client อนุญาตเฉพาะสมาชิกทั่วไปเท่านั้น บัญชีแอดมินใช้สำหรับฝั่ง Staff
-  if (Number(data.Access_Level ?? 0) === 1) {
-    throw new Error('สถานะแอดมินไม่สามารถใช้งาน เฉพาะผู้ใช้งานทั่วไปเท่านั้น');
+  // Client อนุญาตสมาชิกทั่วไปและ VIP เท่านั้น ส่วนแอดมิน/ทดสอบระบบใช้ฝั่ง Staff
+  if ([2, 3].includes(Number(data.Access_Level ?? 0))) {
+    throw new Error('สถานะแอดมินหรือทดสอบระบบไม่สามารถใช้งานได้ เฉพาะผู้ใช้งานทั่วไปและ VIP เท่านั้น');
   }
 
   // 📌 บังคับเปลี่ยนรหัสผ่านเมื่อเข้าสู่ระบบด้วยรหัสเริ่มต้น 1234 เท่านั้น
@@ -265,6 +265,7 @@ async login({ loginId, phone, password }) {
     Username: data.Username || '',
     Email: data.Email || '',
     LoginType: Number(data.LoginType ?? 0),
+    Access_Level: Number(data.Access_Level ?? 0),
     isDefaultPassword: isDefaultPassword // ส่งค่านี้ไปยัง app.js
   };
 

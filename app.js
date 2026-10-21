@@ -342,6 +342,8 @@ function layout(content, back = false) {
   const isAuthPage = currentView === 'auth';
   document.body.classList.toggle('auth-login-page', isAuthPage);
   document.documentElement.classList.toggle('auth-login-page', isAuthPage);
+  const themeColor = document.querySelector('meta[name="theme-color"]');
+  if (themeColor) themeColor.content = isAuthPage ? '#0b376d' : '#435f52';
   app.innerHTML = `<section class="shell ${currentView === 'auth' ? 'auth-shell' : ''} ${currentView === 'change-password' ? 'first-password-shell' : ''}">
     <header class="topbar ${currentView === 'auth' ? 'topbar-login' : ''}" style="display: flex; justify-content: space-between; align-items: center;">
   <!-- ฝั่งซ้าย: ปุ่มย้อนกลับ (ถ้ามี) -->

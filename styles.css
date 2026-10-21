@@ -660,6 +660,26 @@ input:focus {
 
 .product-selection-screen .history-action {
   margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+  width: 100%;
+}
+
+.product-selection-screen .history-action .secondary {
+  flex: 0 1 auto;
+  min-width: 0;
+  padding: 9px 8px;
+  font-size: clamp(11px, 3.1vw, 14px);
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.product-selection-screen .history-action .vip-button-icon {
+  width: 21px;
+  height: 21px;
+  margin: -3px 3px -3px -2px;
 }
 
 .product {

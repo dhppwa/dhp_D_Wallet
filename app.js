@@ -339,7 +339,9 @@ window.addEventListener('beforeunload', releaseUsageOnDisconnect);
 window.addEventListener('offline', releaseUsageOnDisconnect);
 
 function layout(content, back = false) {
-  document.body.classList.toggle('auth-login-page', currentView === 'auth');
+  const isAuthPage = currentView === 'auth';
+  document.body.classList.toggle('auth-login-page', isAuthPage);
+  document.documentElement.classList.toggle('auth-login-page', isAuthPage);
   app.innerHTML = `<section class="shell ${currentView === 'auth' ? 'auth-shell' : ''} ${currentView === 'change-password' ? 'first-password-shell' : ''}">
     <header class="topbar ${currentView === 'auth' ? 'topbar-login' : ''}" style="display: flex; justify-content: space-between; align-items: center;">
   <!-- ฝั่งซ้าย: ปุ่มย้อนกลับ (ถ้ามี) -->

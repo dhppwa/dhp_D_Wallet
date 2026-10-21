@@ -61,6 +61,7 @@ body {
 }
 
 /* ใช้กับพื้นที่รอบกรอบแอปบนจอใหญ่ เฉพาะหน้าเข้าสู่ระบบ */
+html.auth-login-page,
 body.auth-login-page {
   background: linear-gradient(135deg, #071d3b 0%, #0b376d 52%, #29699b 100%);
 }

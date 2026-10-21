@@ -405,7 +405,7 @@ function renderAuth() {
   // ค่าเริ่มต้นสำหรับการเข้าใช้งานครั้งแรก: ติ๊กจำรหัส/เข้าใช้งานอัตโนมัติไว้ก่อน
   // หากผู้ใช้เอาติ๊กออก ระบบจะบันทึกเป็น '0' เพื่อเคารพการเลือกครั้งถัดไป
   const rememberLoginEnabled = localStorage.getItem(REMEMBER_LOGIN_ENABLED_KEY) !== '0';
-  layout(`<div class="auth-wrap"><div class="hero"><img src="public/assets/image/icon-192.png?v=5" alt="D Coupon" class="hero-logo" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 0.5rem; border-radius: 8px;"><h2>เข้าสู่ระบบเพื่อรับสิทธิ์</h2></div>
+  layout(`<div class="auth-wrap"><div class="hero"><img src="public/assets/image/icon-192.png?v=10" alt="D Coupon" class="hero-logo" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 0.5rem; border-radius: 8px;"><h2>เข้าสู่ระบบเพื่อรับสิทธิ์</h2></div>
   <form class="card auth-card" id="auth-form">
     <label>User (Username / โทรศัพท์ / Email)<input required name="loginId" type="text" autocomplete="username" value="${esc(savedLogin?.loginId || '')}"></label>
     <label>รหัสผ่าน<div class="password-input-wrap"><input required name="password" type="password" minlength="4" autocomplete="current-password" value="${esc(savedLogin?.password || '')}"><button class="password-toggle" data-password-toggle type="button" aria-label="แสดงรหัสผ่าน" title="แสดงรหัสผ่าน"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label>

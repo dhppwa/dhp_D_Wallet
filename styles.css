@@ -115,6 +115,34 @@ button {
   overflow-x: hidden;
 }
 
+/* หน้าประวัติใช้พื้นที่เลื่อนของตัวเอง เพื่อให้ PWA บนมือถือเลื่อนรายการได้แน่นอน */
+.shell.history-shell {
+  height: 100dvh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.history-scroll-area {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  padding-right: 2px;
+}
+
+/* ให้หัวตารางติดอยู่ในพื้นที่รายการขณะเลื่อน */
+.history-scroll-area thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f3f4f6;
+  box-shadow: 0 2px 0 #d1d5db;
+}
+
 /* ทุกหน้าและกล่องลอยต้องไม่ชนรอยบาก/แถบระบบ เมื่อเปิดเป็น PWA */
 #toast {
   bottom: calc(20px + env(safe-area-inset-bottom, 0px));

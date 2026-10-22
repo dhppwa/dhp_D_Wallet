@@ -344,7 +344,7 @@ function layout(content, back = false) {
   document.documentElement.classList.toggle('auth-login-page', isAuthPage);
   const themeColor = document.querySelector('meta[name="theme-color"]');
   if (themeColor) themeColor.content = isAuthPage ? '#0b376d' : '#435f52';
-  app.innerHTML = `<section class="shell ${currentView === 'auth' ? 'auth-shell' : ''} ${currentView === 'change-password' ? 'first-password-shell' : ''}">
+  app.innerHTML = `<section class="shell ${currentView === 'auth' ? 'auth-shell' : ''} ${currentView === 'change-password' ? 'first-password-shell' : ''} ${currentView === 'history' ? 'history-shell' : ''}">
     <header class="topbar ${currentView === 'auth' ? 'topbar-login' : ''}" style="display: flex; justify-content: space-between; align-items: center;">
   <!-- ฝั่งซ้าย: ปุ่มย้อนกลับ (ถ้ามี) -->
   <div style="display: flex; align-items: center; gap: 0.75rem;">
@@ -353,7 +353,7 @@ function layout(content, back = false) {
 
   <!-- ฝั่งขวา: ปุ่มออกจากระบบ -->
   <div class="topbar-actions" style="display: flex; align-items: center; gap: 0.5rem;">
-    ${session && !['confirm', 'coupon'].includes(currentView) ? '<button class="logout" id="logout" type="button" aria-label="ออกจากระบบ" title="ออกจากระบบ"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 3v18"/></svg></button>' : ''}
+    ${session && !['confirm', 'coupon', 'history'].includes(currentView) ? '<button class="logout" id="logout" type="button" aria-label="ออกจากระบบ" title="ออกจากระบบ"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 3v18"/></svg></button>' : ''}
   </div>
 </header>
     ${content}
@@ -553,12 +553,12 @@ async function renderProducts() {
         <div class="product-user-info-main">
           <div>
             <p><strong>ยินดีต้อนรับ</strong> ${esc(user.name || user.Name || '-')}</p>
-            <p><strong>โทร:</strong> ${esc(userPhone || '-')}</p>
+            <p><strong>โทร : </strong> ${esc(userPhone || '-')}</p>
             <p style="white-space:pre-wrap;">${esc(customerDetailLine)}</p>
           </div>
         </div>
         <p class="product-user-info-usage" style="color: #059669; font-weight: bold;">
-          ${usageStatus.unlimitedAll ? 'สิทธิ์ไม่จำกัด' : `สิทธิ์ทั้งหมด: ${usedCount}/${allLimitDisplay} สิทธิ์`}
+          ${usageStatus.unlimitedAll ? 'สิทธิ์ทั้งหมด : ไม่จำกัด' : `สิทธิ์ทั้งหมด : ${usedCount}/${allLimitDisplay} สิทธิ์`}
         </p>
         ${usageStatus.unlimitedAll ? '' : `<p class="product-user-info-period" style="color:#475569; font-weight:600;">ใช้ได้ ${usageStatus.periodLimit} สิทธิ์ / ${usageStatus.periodLabel} (ใช้แล้ว ${usageStatus.periodUsed})</p>`}
         ${usageStatus.blocked ? `<p class="product-user-info-warning" style="color:#ef4444; font-size:0.82rem; font-weight:bold;">⚠️ ${esc(usageStatus.reason)}</p>` : ''}
@@ -621,9 +621,9 @@ function openCustomAmountDialog() {
         <h3 style="margin:0 0 8px; color:#14532d;">อาหาร / เครื่องดื่ม</h3>
         <label for="custom-amount-input" style="display:block; margin:14px 0 7px; font-weight:700;">จำนวนเงิน (บาท)</label>
         <input id="custom-amount-input" type="number" inputmode="decimal" min="0.01" max="999999.99" step="0.01" required autofocus style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #cbd5e1; border-radius:10px; font-size:1rem;">
-        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
-          <button id="btn-cancel-custom-amount" class="secondary" type="button">ยกเลิก</button>
-          <button class="primary" type="submit">ตกลง</button>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+          <button id="btn-cancel-custom-amount" type="button" style="flex:1; width:0; min-height:46px; margin:0; border:1px solid var(--green); border-radius:13px; background:#fff; color:var(--green); font-weight:700;">ยกเลิก</button>
+          <button type="submit" style="flex:1; width:0; min-height:46px; margin:0; border:0; border-radius:13px; background:var(--green); color:#fff; font-weight:700;">ตกลง</button>
         </div>
       </form>
     </div>`);
@@ -632,22 +632,28 @@ function openCustomAmountDialog() {
   const input = document.querySelector('#custom-amount-input');
   input?.focus();
   document.querySelector('#btn-cancel-custom-amount')?.addEventListener('click', () => dialog?.remove());
-  document.querySelector('#custom-amount-form')?.addEventListener('submit', event => {
+  document.querySelector('#custom-amount-form')?.addEventListener('submit', async event => {
     event.preventDefault();
     const amount = Number(input?.value);
     if (!Number.isFinite(amount) || amount <= 0 || amount > 999999.99) {
       showAppDialog('กรุณาระบุจำนวนเงินตั้งแต่ 0.01 ถึง 999,999.99 บาท', { title: 'จำนวนเงินไม่ถูกต้อง' });
       return;
     }
-    dialog?.remove();
-    renderConfirm({
-      id: 'CUSTOM',
-      name: 'อาหาร / เครื่องดื่ม',
-      detail: `จำนวนเงิน ${amount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} บาท`,
-      icon: '💵',
-      price: amount,
-      customAmount: amount
-    });
+    const submitButton = event.submitter;
+    buttonLoading(submitButton, true);
+    try {
+      await createCouponAndShowQR({
+        id: 'CUSTOM',
+        name: 'อาหาร / เครื่องดื่ม',
+        detail: `จำนวนเงิน ${amount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} บาท`,
+        icon: '💵',
+        price: amount,
+        customAmount: amount
+      }, () => dialog?.remove());
+    } catch (error) {
+      showAppDialog(error.message || 'ไม่สามารถสร้าง QR Code ได้', { title: 'สร้าง QR Code ไม่สำเร็จ' });
+      buttonLoading(submitButton, false);
+    }
   });
 }
 
@@ -662,7 +668,7 @@ async function renderHistory() {
   try {
     const user = session?.user || {};
     const userPhone = user.phone || user.Phone_No;
-    const loginDisplay = getMemberLoginDisplay(user);
+    const memberName = user.name || user.Name || '-';
     
     const [historyList, products] = await Promise.all([
       window.api.checkHistory(userPhone),
@@ -683,7 +689,7 @@ async function renderHistory() {
         return `
           <tr style="border-bottom: 1px solid #e5e7eb;">
             <td style="padding: 0.75rem 0.25rem; text-align: center; vertical-align: middle;">${index + 1}</td>
-            <td style="padding: 0.75rem 0.5rem; text-align: left; vertical-align: middle; font-size: 0.8rem; color: #4b5563; line-height: 1.45;">
+            <td style="padding: 0.75rem 0.5rem; text-align: left; vertical-align: middle; font-size: 0.8rem; color: #000; line-height: 1.45;">
               <div>${esc(item.useDate)}</div>
               <div style="font-size: 0.72rem; color: #6b7280;">เลขที่บิล: ${esc(item.billNo)}</div>
             </td>
@@ -699,8 +705,9 @@ async function renderHistory() {
       : `<tr><td colspan="3" style="text-align: center; padding: 2rem; color: #6b7280;">ยังไม่มีประวัติการใช้สิทธิ์</td></tr>`;
 
     layout(`
-      <div class="page-title"><h2>ประวัติการใช้สิทธิ์</h2><span>${esc(loginDisplay.value)}</span></div>
-      <div class="card" style="padding: 0.5rem; overflow-x: auto;">
+      <div class="page-title"><h2>ประวัติการใช้สิทธิ์</h2><span>${esc(memberName)}</span></div>
+      <div id="client-history-scroll" class="history-scroll-area">
+      <div class="card" style="padding: 0.5rem; overflow: visible;">
         <table style="width: 100%; border-collapse: collapse;">
           <thead>
             <tr style="border-bottom: 2px solid #d1d5db; background: #f3f4f6;">
@@ -712,10 +719,26 @@ async function renderHistory() {
           <tbody>${historyRows}</tbody>
         </table>
       </div>
+      </div>
     `, true);
   } catch (err) {
     showToast(err.message);
   }
+}
+
+// สร้างคูปองแล้วเปิดหน้า QR โดยตรง ใช้ร่วมกันทั้งรายการปกติและรายการใส่จำนวนเงิน
+async function createCouponAndShowQR(product, beforeShow = null) {
+  const user = session?.user || {};
+  currentCoupon = await api.createCoupon({
+    productId: product.id,
+    customAmount: product.customAmount,
+    phone: user.phone || user.Phone_No,
+    address: user.address || user.Detail,
+    Confirm_Coupon: false
+  }, session?.token);
+  currentCoupon.product = product;
+  beforeShow?.();
+  renderCoupon();
 }
 
 // --- หน้า ยืนยันสิทธิ์ ---
@@ -733,15 +756,7 @@ function renderConfirm(product) {
     const btn = e.submitter; 
     buttonLoading(btn, true);
     try { 
-      currentCoupon = await api.createCoupon({
-        productId: product.id,
-        customAmount: product.customAmount,
-        phone: user.phone || user.Phone_No,
-        address: user.address || user.Detail,
-        Confirm_Coupon: false
-      }, session.token); 
-      currentCoupon.product = product; 
-      renderCoupon(); 
+      await createCouponAndShowQR(product);
     } catch (err) { 
       showToast(err.message); 
       buttonLoading(btn, false); 
@@ -755,6 +770,8 @@ function renderCoupon() {
   cleanupSubscriptions();
   resetInactivityTimer();
   const c = currentCoupon;
+  const customAmount = Number(c?.product?.customAmount);
+  const hasCustomAmount = Number.isFinite(customAmount) && customAmount > 0;
 
   layout(`
     <div class="coupon-head">
@@ -764,6 +781,7 @@ function renderCoupon() {
       <div class="qr-wrap">
         <div id="qrcode"></div>
       </div>
+      ${hasCustomAmount ? `<p style="margin:0 0 12px; text-align:center; color:#075985; font-size:1.65rem; font-weight:800; line-height:1.25;">จำนวนเงิน ฿${customAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>` : ''}
       <p class="coupon-id">รหัสคูปอง: <b>${esc(c.id)}</b></p>
     </section>
     <div class="expiry coupon-expiry">

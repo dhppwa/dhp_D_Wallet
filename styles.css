@@ -195,6 +195,14 @@ button {
   border-radius: 10px;
 }
 
+.coupon-wordmark {
+  display: block;
+  width: min(190px, 62vw);
+  height: auto;
+  margin: 0 auto 0.55rem;
+  object-fit: contain;
+}
+
 .topbar-brand span, .login-brand-name {
   font-size: 20px;
   font-weight: 700;

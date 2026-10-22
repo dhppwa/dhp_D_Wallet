@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'amazon-client-';
-const CACHE_NAME = `${CACHE_PREFIX}v90`;
+const CACHE_NAME = `${CACHE_PREFIX}v99`;
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -10,7 +10,8 @@ const ASSETS_TO_CACHE = [
   './d1-client.js',
   './manifest.json',
   './public/assets/image/icon-192.png',
-  './public/assets/image/icon-512.png'
+  './public/assets/image/icon-512.png',
+  './public/assets/image/d-coupon-wordmark.png'
 ];
 
 self.addEventListener('install', event => {

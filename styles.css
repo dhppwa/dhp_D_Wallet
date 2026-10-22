@@ -1040,6 +1040,23 @@ input:focus {
   margin-top: 14px;
 }
 
+/* ยอดรายการ VIP แยกจากกรอบ QR และแสดงเป็นกล่องขนาดพอดีข้อความ */
+.coupon-custom-amount {
+  display: table;
+  width: fit-content;
+  max-width: calc(100% - 36px);
+  margin: 20px auto 12px;
+  padding: 10px 16px;
+  box-sizing: border-box;
+  border-radius: 13px;
+  background: #fff;
+  color: #075985;
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+}
+
 .expiry span {
   font-size: 22px;
 }

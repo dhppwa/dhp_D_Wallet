@@ -781,9 +781,9 @@ function renderCoupon() {
       <div class="qr-wrap">
         <div id="qrcode"></div>
       </div>
-      ${hasCustomAmount ? `<p style="margin:0 0 12px; text-align:center; color:#075985; font-size:1.65rem; font-weight:800; line-height:1.25;">จำนวนเงิน ฿${customAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>` : ''}
       <p class="coupon-id">รหัสคูปอง: <b>${esc(c.id)}</b></p>
     </section>
+    ${hasCustomAmount ? `<p class="coupon-custom-amount">จำนวนเงิน ฿${customAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>` : ''}
     <div class="expiry coupon-expiry">
       <span>⏱</span><strong id="countdown">03:00</strong>
     </div>

@@ -807,7 +807,7 @@ function renderCoupon() {
     const qrElement = document.querySelector('#qrcode');
     const qrWrap = document.querySelector('.qr-wrap');
     const availableWidth = Math.floor(qrWrap?.getBoundingClientRect().width || 302);
-    const qrSize = Math.min(260, Math.max(120, availableWidth - 42));
+    const qrSize = Math.min(240, Math.max(120, availableWidth - 42));
     qrElement.style.setProperty('--qr-size', `${qrSize}px`);
     qrElement.style.width = `${qrSize + 18}px`;
     qrElement.style.height = `${qrSize + 18}px`;
@@ -916,5 +916,6 @@ if (session) {
 } else {
   renderAuth();
 }
+
 
 

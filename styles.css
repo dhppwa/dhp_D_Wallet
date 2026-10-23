@@ -1018,9 +1018,9 @@ input:focus {
 .qr-wrap #qrcode canvas,
 .qr-wrap #qrcode img {
   display: block;
-  width: var(--qr-size, 260px) !important;
+  width: var(--qr-size, 240px) !important;
   max-width: none;
-  height: var(--qr-size, 260px) !important;
+  height: var(--qr-size, 240px) !important;
   max-height: none;
   object-fit: contain;
 }
@@ -1272,6 +1272,7 @@ input:focus {
     font-size: 18px;
   }
 }
+
 
 
 

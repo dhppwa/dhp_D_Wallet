@@ -1098,6 +1098,23 @@ input:focus {
   line-height: 1.3;
 }
 
+/* เวลานับถอยหลังของหน้า QR อยู่บรรทัดเดียวกับปุ่มกลับ */
+.coupon-topbar-expiry {
+  margin: 0;
+  min-height: 42px;
+  padding: 7px 11px;
+  gap: 6px;
+  border-radius: 12px;
+}
+
+.coupon-topbar-expiry span {
+  font-size: 17px;
+}
+
+.coupon-topbar-expiry strong {
+  font-size: 17px;
+}
+
 /* ยอดรายการ VIP แยกจากกรอบ QR และแสดงเป็นกล่องขนาดพอดีข้อความ */
 .coupon-custom-amount {
   display: table;
@@ -1255,6 +1272,7 @@ input:focus {
     font-size: 18px;
   }
 }
+
 
 
 

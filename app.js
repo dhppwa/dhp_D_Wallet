@@ -349,6 +349,7 @@ function layout(content, back = false) {
   <!-- ฝั่งซ้าย: ปุ่มย้อนกลับ (ถ้ามี) -->
   <div style="display: flex; align-items: center; gap: 0.75rem;">
     ${back ? '<button class="back" id="back" type="button" aria-label="ย้อนกลับ"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>' : ''}
+    ${currentView === 'coupon' ? '<div class="expiry coupon-topbar-expiry"><span>⏱</span><strong id="countdown">03:00</strong></div>' : ''}
   </div>
 
   <!-- ฝั่งขวา: ปุ่มออกจากระบบ -->
@@ -793,9 +794,6 @@ function renderCoupon() {
       <p class="coupon-id">รหัสคูปอง: <b>${esc(c.id)}</b></p>
     </section>
     ${hasCustomAmount ? `<p class="coupon-custom-amount">จำนวนเงิน ฿${customAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>` : ''}
-    <div class="expiry coupon-expiry">
-      <span>⏱</span><strong id="countdown">03:00</strong>
-    </div>
     ${normalProductDisplay}
   `, true);
   
@@ -918,4 +916,5 @@ if (session) {
 } else {
   renderAuth();
 }
+
 

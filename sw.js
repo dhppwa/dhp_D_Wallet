@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'amazon-client-';
-const CACHE_NAME = `${CACHE_PREFIX}v110`;
+const CACHE_NAME = `${CACHE_PREFIX}v113`;
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -49,3 +49,6 @@ self.addEventListener('fetch', event => {
     }
   })());
 });
+
+
+

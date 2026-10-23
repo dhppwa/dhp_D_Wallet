@@ -772,6 +772,15 @@ function renderCoupon() {
   const c = currentCoupon;
   const customAmount = Number(c?.product?.customAmount);
   const hasCustomAmount = Number.isFinite(customAmount) && customAmount > 0;
+  const normalProduct = !hasCustomAmount ? c?.product : null;
+  const normalProductDisplay = normalProduct ? `
+    <div class="coupon-qr-product">
+      ${normalProduct.image
+        ? `<img src="${esc(normalProduct.image)}" alt="${esc(normalProduct.name || 'สินค้า')}">`
+        : `<span class="coupon-qr-product-fallback" aria-hidden="true">${esc(normalProduct.icon || '☕')}</span>`}
+      <strong>${esc(normalProduct.name || '')}</strong>
+    </div>
+  ` : '';
 
   layout(`
     <div class="coupon-head">
@@ -787,6 +796,7 @@ function renderCoupon() {
     <div class="expiry coupon-expiry">
       <span>⏱</span><strong id="countdown">03:00</strong>
     </div>
+    ${normalProductDisplay}
   `, true);
   
   // ใส่เฉพาะข้อมูลที่ Staff ใช้จริง เพื่อให้ QR เล็ก อ่านได้เร็วและชัดขึ้น
@@ -908,3 +918,4 @@ if (session) {
 } else {
   renderAuth();
 }
+

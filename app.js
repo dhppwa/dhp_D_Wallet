@@ -349,11 +349,11 @@ function layout(content, back = false) {
   <!-- ฝั่งซ้าย: ปุ่มย้อนกลับ (ถ้ามี) -->
   <div style="display: flex; align-items: center; gap: 0.75rem;">
     ${back ? '<button class="back" id="back" type="button" aria-label="ย้อนกลับ"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>' : ''}
-    ${currentView === 'coupon' ? '<div class="expiry coupon-topbar-expiry"><span>⏱</span><strong id="countdown">03:00</strong></div>' : ''}
   </div>
 
   <!-- ฝั่งขวา: ปุ่มออกจากระบบ -->
   <div class="topbar-actions" style="display: flex; align-items: center; gap: 0.5rem;">
+    ${currentView === 'coupon' ? '<div class="expiry coupon-topbar-expiry"><span>⏱</span><strong id="countdown">03:00</strong></div>' : ''}
     ${session && !['confirm', 'coupon', 'history'].includes(currentView) ? '<button class="logout" id="logout" type="button" aria-label="ออกจากระบบ" title="ออกจากระบบ"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 3v18"/></svg></button>' : ''}
   </div>
 </header>
@@ -916,6 +916,7 @@ if (session) {
 } else {
   renderAuth();
 }
+
 
 
 

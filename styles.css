@@ -253,14 +253,18 @@ button {
   color: #704128;
 }
 
-.vip-button-icon {
-  width: 27px;
-  height: 27px;
-  object-fit: contain;
-  vertical-align: middle;
-  margin: -5px 5px -5px -4px;
-  background: #000;
+.amount-button-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin: -4px 5px -4px -2px;
   border-radius: 50%;
+  background: #166534;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .brand-mark, .back {
@@ -733,7 +737,7 @@ input:focus {
   white-space: nowrap;
 }
 
-.product-selection-screen .history-action .vip-button-icon {
+.product-selection-screen .history-action .amount-button-icon {
   width: 24px;
   height: 24px;
   margin: -4px 4px -4px -2px;

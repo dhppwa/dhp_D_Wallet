@@ -566,7 +566,7 @@ async function renderProducts() {
     `;
 
     const isVipUser = Number(user.Access_Level ?? user.accessLevel ?? 0) === 1;
-    const historyActionHtml = `<div class="history-action">${isVipUser ? '<button id="btn-custom-amount" type="button" class="secondary"><img src="public/assets/image/vip.png" alt="VIP" class="vip-button-icon">ใส่จำนวนเงิน</button>' : ''}<button id="btn-history" type="button" class="secondary">📜 ประวัติการใช้สิทธิ์</button></div>`;
+    const historyActionHtml = `<div class="history-action">${isVipUser ? '<button id="btn-custom-amount" type="button" class="secondary"><span class="amount-button-icon" aria-hidden="true">$</span>ใส่จำนวนเงิน</button>' : ''}<button id="btn-history" type="button" class="secondary">📜 ประวัติการใช้สิทธิ์</button></div>`;
 
     const productListHtml = `
       <div class="product-list">

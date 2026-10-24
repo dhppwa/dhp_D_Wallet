@@ -120,8 +120,8 @@ async function checkClientLockout() {
     const latestProfile = await window.api.getMemberProfile(phone);
     if (latestProfile?.isUse === false) {
       await forceClientLockoutLogout();
-    } else if ([2, 3].includes(Number(latestProfile?.Access_Level ?? latestProfile?.accessLevel ?? 0))) {
-      await forceClientLockoutLogout('สถานะผู้ใช้งานถูกเปลี่ยนเป็นแอดมินหรือทดสอบระบบ จึงไม่สามารถใช้ PWA Amazon Client ได้');
+    } else if (Number(latestProfile?.Access_Level ?? latestProfile?.accessLevel ?? 0) === 2) {
+      await forceClientLockoutLogout('สถานะผู้ใช้งานถูกเปลี่ยนเป็นแอดมิน จึงไม่สามารถใช้ PWA Amazon Client ได้');
     }
   } catch (error) {
     // ความขัดข้องของเครือข่ายไม่ควรออกจากระบบเอง
@@ -190,7 +190,7 @@ function showAppDialog(message, {
         <p style="${messageStyle}">${esc(message)}</p>
         <div style="display:flex; justify-content:center; gap:10px;">
           ${cancelLabel ? `<button id="btn-cancel-app-message" type="button" style="padding:10px 14px; border:0; border-radius:10px; background:#e8efe4; color:#194832; font-weight:700;">${esc(cancelLabel)}</button>` : ''}
-          <button id="btn-close-app-message" type="button" style="padding:10px 14px; border:0; border-radius:10px; background:#256b45; color:#fff; font-weight:700;">${esc(actionLabel)}</button>
+          ${autoCloseMs > 0 ? '' : `<button id="btn-close-app-message" type="button" style="padding:10px 14px; border:0; border-radius:10px; background:#256b45; color:#fff; font-weight:700;">${esc(actionLabel)}</button>`}
         </div>
       </section><style>@keyframes internet-blink { 50% { opacity:.18; } }</style>
     </div>`);
@@ -199,10 +199,10 @@ function showAppDialog(message, {
     clearTimeout(appDialogTimer);
     dialog?.remove();
   };
-  document.querySelector('#btn-close-app-message').onclick = () => {
+  document.querySelector('#btn-close-app-message')?.addEventListener('click', () => {
     close();
     onAction?.();
-  };
+  });
   document.querySelector('#btn-cancel-app-message')?.addEventListener('click', () => {
     close();
     onCancel?.();
@@ -566,8 +566,8 @@ async function renderProducts() {
       </div>
     `;
 
-    const isVipUser = Number(user.Access_Level ?? user.accessLevel ?? 0) === 1;
-    const historyActionHtml = `<div class="history-action">${isVipUser ? '<button id="btn-custom-amount" type="button" class="secondary"><span class="amount-button-icon" aria-hidden="true">$</span>ใส่จำนวนเงิน</button>' : ''}<button id="btn-history" type="button" class="secondary">📜 ประวัติการใช้สิทธิ์</button></div>`;
+    const canUseCustomAmount = [1, 3].includes(Number(user.Access_Level ?? user.accessLevel ?? 0));
+    const historyActionHtml = `<div class="history-action">${canUseCustomAmount ? '<button id="btn-custom-amount" type="button" class="secondary"><span class="amount-button-icon" aria-hidden="true">$</span>ใส่จำนวนเงิน</button>' : ''}<button id="btn-history" type="button" class="secondary">📜 ประวัติการใช้สิทธิ์</button></div>`;
 
     const productListHtml = `
       <div class="product-list">
@@ -621,7 +621,8 @@ function openCustomAmountDialog() {
       <form id="custom-amount-form" role="dialog" aria-modal="true" style="width:min(100%,360px); padding:22px; border-radius:18px; background:#fffaf4; color:#2c241d; box-shadow:0 20px 45px rgba(0,0,0,.28);">
         <h3 style="margin:0 0 8px; color:#14532d;">อาหาร / เครื่องดื่ม</h3>
         <label for="custom-amount-input" style="display:block; margin:14px 0 7px; font-weight:700;">จำนวนเงิน (บาท)</label>
-        <input id="custom-amount-input" type="number" inputmode="decimal" min="0.01" max="999999.99" step="0.01" required autofocus style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #cbd5e1; border-radius:10px; font-size:1rem;">
+        <input id="custom-amount-input" type="number" inputmode="decimal" min="0.01" max="999999.99" step="0.01" required autofocus style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #cbd5e1; border-radius:10px; font-size:1rem; text-align:right;">
+        <p id="custom-amount-unit" aria-live="polite" style="min-height:1.4em; margin:7px 0 0; color:#475569; font-size:.92rem; text-align:right;">-</p>
         <div style="display:flex; gap:10px; margin-top:20px;">
           <button id="btn-cancel-custom-amount" type="button" style="flex:1; width:0; min-height:46px; margin:0; border:1px solid var(--green); border-radius:13px; background:#fff; color:var(--green); font-weight:700;">ยกเลิก</button>
           <button type="submit" style="flex:1; width:0; min-height:46px; margin:0; border:0; border-radius:13px; background:var(--green); color:#fff; font-weight:700;">ตกลง</button>
@@ -631,6 +632,22 @@ function openCustomAmountDialog() {
 
   const dialog = document.querySelector('#custom-amount-dialog');
   const input = document.querySelector('#custom-amount-input');
+  const amountUnit = document.querySelector('#custom-amount-unit');
+  const getAmountUnit = value => {
+    const amount = Number(value);
+    if (!Number.isFinite(amount) || amount <= 0) return '-';
+    if (amount >= 100000) return 'แสน';
+    if (amount >= 10000) return 'หมื่น';
+    if (amount >= 1000) return 'พัน';
+    if (amount >= 100) return 'ร้อย';
+    if (amount >= 10) return 'สิบ';
+    return 'หน่วย';
+  };
+  const updateAmountUnit = () => {
+    if (amountUnit) amountUnit.textContent = getAmountUnit(input?.value);
+  };
+  input?.addEventListener('input', updateAmountUnit);
+  updateAmountUnit();
   input?.focus();
   document.querySelector('#btn-cancel-custom-amount')?.addEventListener('click', () => dialog?.remove());
   document.querySelector('#custom-amount-form')?.addEventListener('submit', async event => {
@@ -798,7 +815,7 @@ function renderCoupon() {
       </div>
       <p class="coupon-id">รหัสคูปอง: <b>${esc(c.id)}</b></p>
     </section>
-    ${hasCustomAmount ? `<p class="coupon-custom-amount">จำนวนเงิน ฿${customAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>` : ''}
+    ${hasCustomAmount ? `<div class="coupon-custom-amount"><span>จำนวนเงิน</span><strong>${customAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong><span>บาท</span></div>` : ''}
     ${productDisplay}
   `, true);
   

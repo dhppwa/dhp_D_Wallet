@@ -1136,22 +1136,43 @@ input:focus {
   font-size: 17px;
 }
 
-/* ยอดรายการ VIP แยกจากกรอบ QR และแสดงเป็นกล่องขนาดพอดีข้อความ */
+/* ยอดรายการ VIP แยกจากกรอบ QR: มีพื้นหลังเฉพาะตัวเลข */
 .coupon-custom-amount {
-  display: table;
-  width: fit-content;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  width: min(100%, 360px);
   max-width: calc(100% - 36px);
   margin: 20px auto 12px;
-  padding: 10px 16px;
+  align-items: center;
+  gap: 8px;
   box-sizing: border-box;
-  border-radius: 13px;
-  background: #fff;
   color: #075985;
   font-size: 1.65rem;
   font-weight: 800;
   line-height: 1.25;
   text-align: center;
 }
+
+.coupon-custom-amount strong {
+  display: inline-block;
+  min-width: 150px;
+  padding: 10px 16px;
+  border-radius: 13px;
+  background: #fff;
+  color: #0b63ce;
+  box-shadow: 0 2px 7px rgba(7, 89, 133, .14);
+  text-align: center;
+  font-size: 1.14em;
+}
+
+.coupon-custom-amount span {
+  color: #fff;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.coupon-custom-amount span:first-child { text-align: right; }
+.coupon-custom-amount span:last-child { text-align: left; }
 
 .expiry span {
   font-size: 22px;

@@ -227,9 +227,9 @@ async login({ loginId, phone, password }) {
     throw new Error('รหัสผ่านไม่ถูกต้อง');
   }
 
-  // Client อนุญาตสมาชิกทั่วไปและ VIP เท่านั้น ส่วนแอดมิน/ทดสอบระบบใช้ฝั่ง Staff
-  if ([2, 3].includes(Number(data.Access_Level ?? 0))) {
-    throw new Error('สถานะแอดมินหรือทดสอบระบบไม่สามารถใช้งานได้ เฉพาะผู้ใช้งานทั่วไปและ VIP เท่านั้น');
+  // Client อนุญาตผู้ใช้งานทั่วไป, VIP และทดสอบระบบ; แอดมินใช้เฉพาะฝั่ง Staff
+  if (Number(data.Access_Level ?? 0) === 2) {
+    throw new Error('สถานะแอดมินไม่สามารถใช้งาน PWA Amazon Client ได้');
   }
 
   // 📌 บังคับเปลี่ยนรหัสผ่านเมื่อเข้าสู่ระบบด้วยรหัสเริ่มต้น 1234 เท่านั้น

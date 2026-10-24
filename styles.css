@@ -1087,10 +1087,24 @@ input:focus {
   object-fit: cover;
 }
 
+/* รายการอาหาร / เครื่องดื่ม ใช้การ์ด VIP ที่กะทัดรัดกว่าสินค้าปกติ */
+.coupon-qr-product-vip {
+  min-width: 132px;
+  padding: 10px 14px;
+  gap: 6px;
+  border-radius: 15px;
+}
+
 .coupon-qr-product-vip img {
+  width: 96px;
+  height: 96px;
   object-fit: contain;
-  padding: 8px;
+  padding: 6px;
   box-sizing: border-box;
+}
+
+.coupon-qr-product-vip strong {
+  font-size: 14px;
 }
 
 .coupon-qr-product-fallback {
@@ -1279,6 +1293,7 @@ input:focus {
     font-size: 18px;
   }
 }
+
 
 
 

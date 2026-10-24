@@ -577,7 +577,7 @@ async function renderProducts() {
               ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" />` : esc(p.icon || '☕')}
             </span>
             <span>
-              <strong>${esc(p.name)}</strong>
+              <strong>${esc(p.name)} <span class="product-free-label">FREE</span></strong>
               <small>${esc(p.detail)}</small>
             </span>
             ${usageStatus.blocked ? '<i>ใช้สิทธิ์ครบแล้ว</i>' : ''}
@@ -774,7 +774,12 @@ function renderCoupon() {
   const customAmount = Number(c?.product?.customAmount);
   const hasCustomAmount = Number.isFinite(customAmount) && customAmount > 0;
   const normalProduct = !hasCustomAmount ? c?.product : null;
-  const normalProductDisplay = normalProduct ? `
+  const productDisplay = hasCustomAmount ? `
+    <div class="coupon-qr-product coupon-qr-product-vip">
+      <img src="public/assets/image/vip.png" alt="VIP">
+      <strong>อาหาร / เครื่องดื่ม</strong>
+    </div>
+  ` : normalProduct ? `
     <div class="coupon-qr-product">
       ${normalProduct.image
         ? `<img src="${esc(normalProduct.image)}" alt="${esc(normalProduct.name || 'สินค้า')}">`
@@ -794,7 +799,7 @@ function renderCoupon() {
       <p class="coupon-id">รหัสคูปอง: <b>${esc(c.id)}</b></p>
     </section>
     ${hasCustomAmount ? `<p class="coupon-custom-amount">จำนวนเงิน ฿${customAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>` : ''}
-    ${normalProductDisplay}
+    ${productDisplay}
   `, true);
   
   // ใส่เฉพาะข้อมูลที่ Staff ใช้จริง เพื่อให้ QR เล็ก อ่านได้เร็วและชัดขึ้น
@@ -916,6 +921,8 @@ if (session) {
 } else {
   renderAuth();
 }
+
+
 
 
 

@@ -720,7 +720,7 @@ input:focus {
 }
 
 .product-selection-screen .history-action {
-  margin-top: 10px;
+  margin-top: 20px;
   display: flex;
   justify-content: center;
   flex-wrap: nowrap;
@@ -729,7 +729,8 @@ input:focus {
 }
 
 .product-selection-screen .history-action .secondary {
-  flex: 0 1 auto;
+  flex: 1 1 0;
+  width: 0;
   min-width: 0;
   padding: 12px 10px;
   font-size: clamp(12px, 3.5vw, 15px);
@@ -1086,6 +1087,12 @@ input:focus {
   object-fit: cover;
 }
 
+.coupon-qr-product-vip img {
+  object-fit: contain;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
 .coupon-qr-product-fallback {
   display: grid;
   place-items: center;
@@ -1272,6 +1279,7 @@ input:focus {
     font-size: 18px;
   }
 }
+
 
 
 

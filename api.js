@@ -384,9 +384,9 @@ async login({ loginId, phone, password }) {
   // 2. รายการสินค้า
   async products(token) {
     return [
-      { id: '1', name: 'แบล็คคอฟฟี (Free)', detail: 'เย็น มูลค่า 60 บาท', image: 'public/assets/image/black-coffee.webp', color: 'orange', price: 60 },
-      { id: '2', name: 'เอสเปรสโซ (Free)', detail: 'เย็น มูลค่า 60 บาท', image: 'public/assets/image/espresso.webp', color: 'green', price: 60 },
-      { id: '3', name: 'ชานม (Free)', detail: 'เย็น มูลค่า 50 บาท', image: 'public/assets/image/tea-with-milk.webp', color: 'gold', price: 50 }
+      { id: '1', name: 'แบล็คคอฟฟี (เย็น)', detail: 'มูลค่า 60 บาท', image: 'public/assets/image/black-coffee.webp', color: 'orange', price: 60 },
+      { id: '2', name: 'เอสเปรสโซ (เย็น)', detail: 'มูลค่า 60 บาท', image: 'public/assets/image/espresso.webp', color: 'green', price: 60 },
+      { id: '3', name: 'ชานม (เย็น)', detail: 'มูลค่า 50 บาท', image: 'public/assets/image/tea-with-milk.webp', color: 'gold', price: 50 }
     ];
   },
 
@@ -523,6 +523,12 @@ async login({ loginId, phone, password }) {
 
     if (billErr) throw new Error(`ไม่สามารถดึงข้อมูลประวัติได้: ${billErr.message}`);
 
+    const normalProductNames = {
+      '1': 'แบล็คคอฟฟี (เย็น)',
+      '2': 'เอสเปรสโซ (เย็น)',
+      '3': 'ชานม (เย็น)'
+    };
+
     return (bills || []).map(item => {
       let productId = item.Product_Type != null ? String(item.Product_Type).replace(/\.0+$/, '') : '1';
       if (item.Product_Type == null && item.Coupon_No && item.Coupon_No.startsWith('CPN-')) {
@@ -535,7 +541,7 @@ async login({ loginId, phone, password }) {
         billNo: item.Bill_No || '-',
         couponNo: item.Coupon_No || '-',
         productId: String(productId),
-        productName: item.ItemDetail || (/^C-\d+$/i.test(String(productId)) ? 'อาหาร / เครื่องดื่ม' : ''),
+        productName: normalProductNames[productId] || item.ItemDetail || (/^C-\d+$/i.test(String(productId)) ? 'อาหาร / เครื่องดื่ม' : ''),
         useDate: item.InsertDate ? new Date(item.InsertDate).toLocaleString('th-TH', {
           year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
         }) : '-'
@@ -543,3 +549,5 @@ async login({ loginId, phone, password }) {
     });
   }
 };
+
+

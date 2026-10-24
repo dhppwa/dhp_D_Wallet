@@ -170,7 +170,7 @@ function getMemberLoginDisplay(member = {}) {
 }
 let appDialogTimer = null;
 function showAppDialog(message, {
-  title = 'แจ้งเตือน',
+  title = '',
   autoCloseMs = 0,
   actionLabel = 'ปิด',
   cancelLabel = '',
@@ -186,7 +186,7 @@ function showAppDialog(message, {
   document.body.insertAdjacentHTML('beforeend', `
     <div id="app-message-dialog" style="position:fixed; inset:0; z-index:50000; display:grid; place-items:center; padding:20px; background:rgba(20,40,29,.62);">
       <section role="dialog" aria-modal="true" aria-labelledby="app-message-title" style="width:min(100%,360px); padding:22px; border-radius:18px; background:#fffaf4; color:#2c241d; box-shadow:0 20px 45px rgba(0,0,0,.28); text-align:center;">
-        <h2 id="app-message-title" style="margin:0 0 10px; font-size:1.2rem; color:#194832;">${esc(title)}</h2>
+        ${title && title !== 'แจ้งเตือน' ? `<h2 id="app-message-title" style="margin:0 0 10px; font-size:1.2rem; color:#194832;">${esc(title)}</h2>` : ''}
         <p style="${messageStyle}">${esc(message)}</p>
         <div style="display:flex; justify-content:center; gap:10px;">
           ${cancelLabel ? `<button id="btn-cancel-app-message" type="button" style="padding:10px 14px; border:0; border-radius:10px; background:#e8efe4; color:#194832; font-weight:700;">${esc(cancelLabel)}</button>` : ''}
@@ -222,8 +222,8 @@ function showConfirmDialog(message, {
     onCancel: () => resolve(false)
   }));
 }
-const showToast = (text, title = 'แจ้งเตือน') => showAppDialog(text, { title, autoCloseMs: 3000 });
-window.alert = message => showAppDialog(message, { title: 'แจ้งเตือน' });
+const showToast = (text, title = '') => showAppDialog(text, { title, autoCloseMs: 3000 });
+window.alert = message => showAppDialog(message);
 window.addEventListener('offline', () => showAppDialog('เชื่อมต่อ Internet ไม่ได้ กรุณาตรวจสอบหรือเชื่อมต่อ Internet แล้วลองอีกครั้ง', { title: 'Internet' }));
 window.addEventListener('online', async () => {
   showToast('เชื่อมต่อ Internet แล้ว');

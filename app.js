@@ -162,11 +162,19 @@ const removeVisibleProductCode = value => String(value ?? '')
   .trim();
 const esc = value => removeVisibleProductCode(value).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[c]));
 
+// แสดงเบอร์โทรแบบปิดบังข้อมูลส่วนบุคคล โดยคงไว้เฉพาะ 4 หลักสุดท้าย
+function maskPhoneNumber(value) {
+  const phone = String(value ?? '').trim();
+  if (!phone || phone === '-') return '-';
+  if (phone.length <= 4) return phone;
+  return `${'X'.repeat(phone.length - 4)}${phone.slice(-4)}`;
+}
+
 function getMemberLoginDisplay(member = {}) {
   const loginType = Number(member.LoginType ?? member.loginType ?? 0);
   if (loginType === 1) return { label: 'Username', value: member.Username || member.username || '-' };
   if (loginType === 2) return { label: 'Email', value: member.Email || member.email || '-' };
-  return { label: 'โทร', value: member.Phone_No || member.phone || '-' };
+  return { label: 'โทร', value: maskPhoneNumber(member.Phone_No || member.phone) };
 }
 let appDialogTimer = null;
 function showAppDialog(message, {
@@ -554,7 +562,7 @@ async function renderProducts() {
         <div class="product-user-info-main">
           <div>
             <p><strong>ยินดีต้อนรับ</strong> ${esc(user.name || user.Name || '-')}</p>
-            <p><strong>โทร : </strong> ${esc(userPhone || '-')}</p>
+            <p><strong>โทร : </strong> ${esc(maskPhoneNumber(userPhone))}</p>
             <p style="white-space:pre-wrap;">${esc(customerDetailLine)}</p>
           </div>
         </div>

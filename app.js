@@ -348,10 +348,13 @@ window.addEventListener('offline', releaseUsageOnDisconnect);
 
 function layout(content, back = false) {
   const isAuthPage = currentView === 'auth';
+  const isFirstPasswordPage = currentView === 'change-password';
   document.body.classList.toggle('auth-login-page', isAuthPage);
   document.documentElement.classList.toggle('auth-login-page', isAuthPage);
+  document.body.classList.toggle('first-password-page', isFirstPasswordPage);
+  document.documentElement.classList.toggle('first-password-page', isFirstPasswordPage);
   const themeColor = document.querySelector('meta[name="theme-color"]');
-  if (themeColor) themeColor.content = isAuthPage ? '#0b376d' : '#435f52';
+  if (themeColor) themeColor.content = isFirstPasswordPage ? '#6d28d9' : (isAuthPage ? '#0b376d' : '#435f52');
   app.innerHTML = `<section class="shell ${currentView === 'auth' ? 'auth-shell' : ''} ${currentView === 'change-password' ? 'first-password-shell' : ''} ${currentView === 'history' ? 'history-shell' : ''}">
     <header class="topbar ${currentView === 'auth' ? 'topbar-login' : ''}" style="display: flex; justify-content: space-between; align-items: center;">
   <!-- ฝั่งซ้าย: ปุ่มย้อนกลับ (ถ้ามี) -->
@@ -703,6 +706,25 @@ async function renderHistory() {
 
     const productMap = {};
     products.forEach(p => { productMap[p.id] = p; });
+    const historySummary = historyList.reduce((groups, item) => {
+      const productName = String(productMap[item.productId]?.name || item.productName || 'ไม่ระบุประเภท').trim() || 'ไม่ระบุประเภท';
+      groups.set(productName, (groups.get(productName) || 0) + 1);
+      return groups;
+    }, new Map());
+    const historySummaryHtml = historyList.length > 0 ? `
+      <section style="margin:0 0 0.5rem; padding:0.85rem; border:1px solid #bfdbfe; border-radius:10px; background:#eff6ff;">
+        <div style="font-weight:800; color:#1d4ed8; margin-bottom:0.55rem;">สรุปรวมรายการ</div>
+        <div style="display:flex; justify-content:space-between; gap:0.75rem; padding-bottom:0.55rem; border-bottom:1px solid #bfdbfe; color:#1f2937;">
+          <span>รวมจำนวนทั้งหมด</span><strong style="color:#1d4ed8; white-space:nowrap;">${historyList.length.toLocaleString('th-TH')} รายการ</strong>
+        </div>
+        <div style="margin:0.65rem 0 0.35rem; font-size:0.82rem; font-weight:700; color:#475569;">แยกตามประเภท</div>
+        <div style="display:grid; gap:0.35rem;">
+          ${[...historySummary.entries()].map(([productName, count]) => `
+            <div style="display:flex; justify-content:space-between; gap:0.75rem; font-size:0.88rem; color:#334155;">
+              <span style="overflow-wrap:anywhere;">${esc(productName)}</span><strong style="white-space:nowrap;">${count.toLocaleString('th-TH')} รายการ</strong>
+            </div>`).join('')}
+        </div>
+      </section>` : '';
 
     const historyRows = historyList.length > 0 
       ? historyList.map((item, index) => {
@@ -733,6 +755,7 @@ async function renderHistory() {
     layout(`
       <div class="page-title"><h2>ประวัติการใช้สิทธิ์</h2><span>${esc(memberName)}</span></div>
       <div id="client-history-scroll" class="history-scroll-area">
+      ${historySummaryHtml}
       <div class="card" style="padding: 0.5rem; overflow: visible;">
         <table style="width: 100%; border-collapse: collapse;">
           <thead>

@@ -386,6 +386,32 @@ button {
   background: linear-gradient(160deg, #4c1d95 0%, #6d28d9 52%, #8b5cf6 100%);
 }
 
+/* iOS PWA: ให้พื้นหลังม่วงต่อเนื่องถึง Safe Area ล่างของหน้าเปลี่ยนรหัสครั้งแรก */
+html.first-password-page,
+body.first-password-page {
+  background: linear-gradient(160deg, #4c1d95 0%, #6d28d9 52%, #8b5cf6 100%);
+}
+
+body.first-password-page #app,
+body.first-password-page .first-password-shell {
+  background: linear-gradient(160deg, #4c1d95 0%, #6d28d9 52%, #8b5cf6 100%);
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+@supports (-webkit-touch-callout: none) {
+  html.first-password-page,
+  body.first-password-page,
+  body.first-password-page #app,
+  body.first-password-page .first-password-shell {
+    min-height: -webkit-fill-available;
+  }
+
+  body.first-password-page {
+    background-color: #6d28d9;
+  }
+}
+
 .first-password-shell .hero-icon {
   background: #f3e8ff;
   color: #6b21a8;

@@ -699,10 +699,13 @@ async function renderHistory() {
     const userPhone = user.phone || user.Phone_No;
     const memberName = user.name || user.Name || '-';
     
-    const [historyList, products] = await Promise.all([
+    const [historyList, products, usageStatus] = await Promise.all([
       window.api.checkHistory(userPhone),
-      window.api.products(session.token)
+      window.api.products(session.token),
+      window.api.getUsageLimitStatus(userPhone)
     ]);
+    const usedRights = Math.max(0, Number(usageStatus.usedCount ?? 0));
+    const remainingRights = usageStatus.unlimitedAll ? 'ไม่จำกัด' : `${Math.max(0, Number(usageStatus.allLimit ?? 0) - usedRights).toLocaleString('th-TH')} สิทธิ์`;
 
     const productMap = {};
     products.forEach(p => { productMap[p.id] = p; });
@@ -711,12 +714,14 @@ async function renderHistory() {
       groups.set(productName, (groups.get(productName) || 0) + 1);
       return groups;
     }, new Map());
-    const historySummaryHtml = historyList.length > 0 ? `
+    const historySummaryHtml = `
       <section style="margin:0 0 0.5rem; padding:0.85rem; border:1px solid #bfdbfe; border-radius:10px; background:#eff6ff;">
         <div style="font-weight:800; color:#1d4ed8; margin-bottom:0.55rem;">สรุปรวมรายการ</div>
         <div style="display:flex; justify-content:space-between; gap:0.75rem; padding-bottom:0.55rem; border-bottom:1px solid #bfdbfe; color:#1f2937;">
           <span>รวมจำนวนทั้งหมด</span><strong style="color:#1d4ed8; white-space:nowrap;">${historyList.length.toLocaleString('th-TH')} รายการ</strong>
         </div>
+        <div style="display:flex; justify-content:space-between; gap:0.75rem; margin-top:0.55rem; color:#334155;"><span>สิทธิ์ที่ใช้ไป</span><strong>${usedRights.toLocaleString('th-TH')} สิทธิ์</strong></div>
+        <div style="display:flex; justify-content:space-between; gap:0.75rem; margin-top:0.35rem; color:#334155;"><span>สิทธิ์คงเหลือทั้งหมด</span><strong>${remainingRights}</strong></div>
         <div style="margin:0.65rem 0 0.35rem; font-size:0.82rem; font-weight:700; color:#475569;">แยกตามประเภท</div>
         <div style="display:grid; gap:0.35rem;">
           ${[...historySummary.entries()].map(([productName, count]) => `
@@ -724,7 +729,7 @@ async function renderHistory() {
               <span style="overflow-wrap:anywhere;">${esc(productName)}</span><strong style="white-space:nowrap;">${count.toLocaleString('th-TH')} รายการ</strong>
             </div>`).join('')}
         </div>
-      </section>` : '';
+      </section>`;
 
     const historyRows = historyList.length > 0 
       ? historyList.map((item, index) => {

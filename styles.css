@@ -720,6 +720,11 @@ input:focus {
 
 .product-selection-screen .product-list {
   gap: 8px;
+  max-height: min(45vh, 480px);
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 .product-selection-screen .product {

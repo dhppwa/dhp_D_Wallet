@@ -387,10 +387,26 @@ async login({ loginId, phone, password }) {
       { id: '1', name: 'แบล็คคอฟฟี (เย็น)', detail: 'มูลค่า 60 บาท', image: 'public/assets/image/black-coffee.webp', color: 'orange', price: 60 },
       { id: '2', name: 'เอสเปรสโซ (เย็น)', detail: 'มูลค่า 60 บาท', image: 'public/assets/image/espresso.webp', color: 'green', price: 60 },
       { id: '3', name: 'ชานม (เย็น)', detail: 'มูลค่า 50 บาท', image: 'public/assets/image/tea-with-milk.webp', color: 'gold', price: 50 },
-      { id: '4', name: 'แบล็คคอฟฟี (ร้อน)', detail: 'มูลค่า 60 บาท', image: 'public/assets/image/black-coffee.webp', color: 'orange', price: 60 },
-      { id: '5', name: 'เอสเปรสโซ (ร้อน)', detail: 'มูลค่า 60 บาท', image: 'public/assets/image/espresso.webp', color: 'green', price: 60 },
-      { id: '6', name: 'ชานม (ร้อน)', detail: 'มูลค่า 50 บาท', image: 'public/assets/image/tea-with-milk.webp', color: 'gold', price: 50 }
-    ];
+      { id: '4', name: 'แบล็คคอฟฟี (ร้อน)', detail: 'มูลค่า 40 บาท', image: 'public/assets/image/black-coffee.webp', color: 'orange', price: 40 },
+      { id: '5', name: 'เอสเปรสโซ (ร้อน)', detail: 'มูลค่า 40 บาท', image: 'public/assets/image/espresso.webp', color: 'green', price: 40 },
+      { id: '6', name: 'ชานม (ร้อน)', detail: 'มูลค่า 45 บาท', image: 'public/assets/image/tea-with-milk.webp', color: 'gold', price: 45 },
+      { id: '7', name: 'ชา (ร้อน)', detail: 'มูลค่า 45 บาท', color: 'gold', price: 45 },
+      { id: '8', name: 'ชาเขียวนม (ร้อน)', detail: 'มูลค่า 50 บาท', color: 'green', price: 50 },
+      { id: '9', name: 'ชาเขียวนม (เย็น)', detail: 'มูลค่า 55 บาท', color: 'green', price: 55 },
+      { id: '10', name: 'ชาดำ (เย็น)', detail: 'มูลค่า 45 บาท', color: 'gold', price: 45 },
+      { id: '11', name: 'ชามะนาว (เย็น)', detail: 'มูลค่า 50 บาท', color: 'gold', price: 50 },
+      { id: '12', name: 'ช็อกโกแลต (ร้อน)', detail: 'มูลค่า 45 บาท', color: 'orange', price: 45 },
+      { id: '13', name: 'ช็อกโกแลต (เย็น)', detail: 'มูลค่า 55 บาท', color: 'orange', price: 55 },
+      { id: '14', name: 'น้ำลิ้นจี่ (เย็น)', detail: 'มูลค่า 45 บาท', color: 'gold', price: 45 },
+      { id: '15', name: 'อเมซอน (ร้อน)', detail: 'มูลค่า 50 บาท', color: 'green', price: 50 },
+      { id: '16', name: 'คาปูชิโน (ร้อน)', detail: 'มูลค่า 50 บาท', color: 'orange', price: 50 },
+      { id: '17', name: 'ลาเต้อเมซอน (ร้อน)', detail: 'มูลค่า 55 บาท', color: 'orange', price: 55 },
+      { id: '18', name: 'มอคค่า (ร้อน)', detail: 'มูลค่า 55 บาท', color: 'orange', price: 55 },
+      { id: '19', name: 'ไวท์ ช็อก มัคคิอาโต้ (ร้อน)', detail: 'มูลค่า 60 บาท', color: 'gold', price: 60 }
+    ].map(product => {
+      const sharedImageId = { '6': '3', '8': '9', '12': '13' }[product.id] || product.id;
+      return { ...product, image: `public/assets/image/product-${sharedImageId}-cutout.png` };
+    });
   },
 
   // 3. สร้างคูปอง
@@ -532,7 +548,20 @@ async login({ loginId, phone, password }) {
       '3': 'ชานม (เย็น)',
       '4': 'แบล็คคอฟฟี (ร้อน)',
       '5': 'เอสเปรสโซ (ร้อน)',
-      '6': 'ชานม (ร้อน)'
+      '6': 'ชานม (ร้อน)',
+      '7': 'ชา (ร้อน)',
+      '8': 'ชาเขียวนม (ร้อน)',
+      '9': 'ชาเขียวนม (เย็น)',
+      '10': 'ชาดำ (เย็น)',
+      '11': 'ชามะนาว (เย็น)',
+      '12': 'ช็อกโกแลต (ร้อน)',
+      '13': 'ช็อกโกแลต (เย็น)',
+      '14': 'น้ำลิ้นจี่ (เย็น)',
+      '15': 'อเมซอน (ร้อน)',
+      '16': 'คาปูชิโน (ร้อน)',
+      '17': 'ลาเต้อเมซอน (ร้อน)',
+      '18': 'มอคค่า (ร้อน)',
+      '19': 'ไวท์ ช็อก มัคคิอาโต้ (ร้อน)'
     };
 
     return (bills || []).map(item => {

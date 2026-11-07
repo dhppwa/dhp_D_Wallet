@@ -583,9 +583,9 @@ async function renderProducts() {
     const productListHtml = `
       <div class="product-list">
         ${products.map(p => `
-          <button class="product" data-id="${esc(p.id)}" data-temperature="${Number(p.id) <= 3 ? 'cold' : 'hot'}" hidden ${usageStatus.blocked ? 'style="opacity: 0.6; cursor: not-allowed;"' : ''}>
+          <button class="product" data-id="${esc(p.id)}" data-temperature="${p.name.includes('(ร้อน)') ? 'hot' : 'cold'}" hidden ${usageStatus.blocked ? 'style="opacity: 0.6; cursor: not-allowed;"' : ''}>
             <span class="product-icon ${esc(p.color)}">
-              ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" />` : esc(p.icon || '☕')}
+              ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:contain;border-radius:8px;" />` : esc(p.icon || '☕')}
             </span>
             <span>
               <strong>${esc(p.name)} <span class="product-free-label">FREE</span></strong>
@@ -597,7 +597,7 @@ async function renderProducts() {
       </div>
     `;
 
-    const temperaturePicker = `<div class="card" style="padding:14px; margin-bottom:12px;"><strong style="display:block; margin-bottom:10px; color:#14532d;">เลือกรับเครื่องดื่มแบบร้อนหรือเย็น</strong><div style="display:flex; gap:10px;"><button type="button" class="secondary" data-temperature-choice="hot" aria-pressed="false" style="margin:0;">☕ ร้อน</button><button type="button" class="secondary" data-temperature-choice="cold" aria-pressed="false" style="margin:0;">🧊 เย็น</button></div></div>`;
+    const temperaturePicker = `<div class="card" style="padding:14px; margin-bottom:12px;"><strong style="display:block; margin-bottom:10px; color:#14532d;">เลือกประเภทเมนู</strong><div style="display:flex; gap:10px;"><button type="button" class="secondary" data-temperature-choice="hot" aria-pressed="false" style="margin:0;">☕ ร้อน</button><button type="button" class="secondary" data-temperature-choice="cold" aria-pressed="false" style="margin:0;">🧊 เย็น</button></div></div>`;
     layout(`<div class="product-selection-screen">${userInfoHtml}<div class="page-title product-page-title"><h2>เลือกรายการสินค้า</h2></div>${temperaturePicker}${productListHtml}${historyActionHtml}</div>`, false);
     document.querySelectorAll('[data-temperature-choice]').forEach(button => button.addEventListener('click', () => {
       const selected = button.dataset.temperatureChoice;
@@ -747,7 +747,7 @@ async function renderHistory() {
         const product = productMap[item.productId] || { name: item.productName || 'เครื่องดื่ม Cafe Amazon' };
         
         const imgHtml = product.image 
-          ? `<img src="${esc(product.image)}" alt="${esc(product.name)}" style="width:40px; height:40px; object-fit:cover; border-radius:8px; flex-shrink:0;">`
+          ? `<img src="${esc(product.image)}" alt="${esc(product.name)}" style="width:40px; height:40px; object-fit:contain; border-radius:8px; flex-shrink:0;">`
           : `<div style="width:40px; height:40px; background:#e3f6ed; border-radius:8px; display:grid; place-items:center; font-size:18px; flex-shrink:0;">☕</div>`;
 
         return `

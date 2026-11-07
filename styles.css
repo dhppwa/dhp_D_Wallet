@@ -742,6 +742,14 @@ input:focus {
   margin: 0 0 6px;
 }
 
+.product-temperature-picker { padding: 8px 10px; border-radius: 12px; }
+.product-temperature-picker strong { display: block; margin-bottom: 5px; color: #14532d; font-size: 0.85rem; }
+.product-temperature-actions { display: flex; gap: 8px; }
+.product-temperature-actions .secondary { margin: 0; padding: 7px 10px; font-size: 0.9rem; }
+.product-category { margin-bottom: 12px; }
+.product-category[hidden] { display: none; }
+.product-category-title { margin: 4px 0 6px; color: #fff; font-size: 0.95rem; }
+
 .product-selection-screen .product-page-title h2 {
   font-size: 15px;
 }

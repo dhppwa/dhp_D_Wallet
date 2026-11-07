@@ -404,8 +404,10 @@ async login({ loginId, phone, password }) {
       { id: '18', name: 'มอคค่า (ร้อน)', detail: 'มูลค่า 55 บาท', color: 'orange', price: 55 },
       { id: '19', name: 'ไวท์ ช็อก มัคคิอาโต้ (ร้อน)', detail: 'มูลค่า 60 บาท', color: 'gold', price: 60 }
     ].map(product => {
-      const sharedImageId = { '6': '3', '8': '9', '12': '13' }[product.id] || product.id;
-      return { ...product, image: `public/assets/image/product-${sharedImageId}-cutout.png` };
+      const image = ['6', '8', '12'].includes(product.id)
+        ? 'public/assets/image/hot-drink-shared-cutout.png'
+        : `public/assets/image/product-${product.id}-cutout.png`;
+      return { ...product, image };
     });
   },
 

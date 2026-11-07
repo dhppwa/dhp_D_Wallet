@@ -580,9 +580,17 @@ async function renderProducts() {
     const canUseCustomAmount = [1, 3].includes(Number(user.Access_Level ?? user.accessLevel ?? 0));
     const historyActionHtml = `<div class="history-action">${canUseCustomAmount ? '<button id="btn-custom-amount" type="button" class="secondary"><span class="amount-button-icon" aria-hidden="true">$</span>ใส่จำนวนเงิน</button>' : ''}<button id="btn-history" type="button" class="secondary">📜 ประวัติการใช้สิทธิ์</button></div>`;
 
-    const productListHtml = `
-      <div class="product-list">
-        ${products.map(p => `
+    const productCategories = [
+      { name: 'กาแฟ', ids: ['1', '2', '4', '5', '15', '16', '17', '18', '19'] },
+      { name: 'ชา', ids: ['3', '6', '7', '8', '9', '10', '11'] },
+      { name: 'นม / ช็อกโกแลต', ids: ['12', '13'] },
+      { name: 'น้ำผลไม้ & สมูทตี้', ids: ['14'] }
+    ];
+    const productListHtml = productCategories.map(category => `
+      <section class="product-category" hidden>
+        <h3 class="product-category-title">${esc(category.name)}</h3>
+        <div class="product-list">
+        ${products.filter(p => category.ids.includes(String(p.id))).map(p => `
           <button class="product" data-id="${esc(p.id)}" data-temperature="${p.name.includes('(ร้อน)') ? 'hot' : 'cold'}" hidden ${usageStatus.blocked ? 'style="opacity: 0.6; cursor: not-allowed;"' : ''}>
             <span class="product-icon ${esc(p.color)}">
               ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:contain;border-radius:8px;" />` : esc(p.icon || '☕')}
@@ -594,11 +602,12 @@ async function renderProducts() {
             ${usageStatus.blocked ? '<i>ใช้สิทธิ์ครบแล้ว</i>' : ''}
           </button>
         `).join('')}
-      </div>
-    `;
+        </div>
+      </section>
+    `).join('');
 
-    const temperaturePicker = `<div class="card" style="padding:14px; margin-bottom:12px;"><strong style="display:block; margin-bottom:10px; color:#14532d;">เลือกประเภทเมนู</strong><div style="display:flex; gap:10px;"><button type="button" class="secondary" data-temperature-choice="hot" aria-pressed="false" style="margin:0;">☕ ร้อน</button><button type="button" class="secondary" data-temperature-choice="cold" aria-pressed="false" style="margin:0;">🧊 เย็น</button></div></div>`;
-    layout(`<div class="product-selection-screen">${userInfoHtml}<div class="product-selection-header"><div class="page-title product-page-title"><h2>เลือกรายการสินค้า</h2></div>${temperaturePicker}</div>${productListHtml}</div>${historyActionHtml}`, false);
+    const temperaturePicker = `<div class="card product-temperature-picker"><strong>เลือกประเภทเมนู</strong><div class="product-temperature-actions"><button type="button" class="secondary" data-temperature-choice="hot" aria-pressed="false">☕ ร้อน</button><button type="button" class="secondary" data-temperature-choice="cold" aria-pressed="false">🧊 เย็น</button></div></div>`;
+    layout(`<div class="product-selection-screen">${userInfoHtml}<div class="product-selection-header">${temperaturePicker}</div>${productListHtml}</div>${historyActionHtml}`, false);
     document.querySelectorAll('[data-temperature-choice]').forEach(button => button.addEventListener('click', () => {
       const selected = button.dataset.temperatureChoice;
       document.querySelectorAll('[data-temperature-choice]').forEach(choice => {
@@ -608,6 +617,7 @@ async function renderProducts() {
         choice.style.color = active ? '#fff' : '';
       });
       document.querySelectorAll('.product[data-temperature]').forEach(product => { product.hidden = product.dataset.temperature !== selected; });
+      document.querySelectorAll('.product-category').forEach(category => { category.hidden = !category.querySelector('.product:not([hidden])'); });
     }));
     
     document.querySelector('#btn-history')?.addEventListener('click', () => renderHistory());

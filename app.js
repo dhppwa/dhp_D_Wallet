@@ -355,7 +355,7 @@ function layout(content, back = false) {
   document.documentElement.classList.toggle('first-password-page', isFirstPasswordPage);
   const themeColor = document.querySelector('meta[name="theme-color"]');
   if (themeColor) themeColor.content = isFirstPasswordPage ? '#6d28d9' : (isAuthPage ? '#0b376d' : '#435f52');
-  app.innerHTML = `<section class="shell ${currentView === 'auth' ? 'auth-shell' : ''} ${currentView === 'change-password' ? 'first-password-shell' : ''} ${currentView === 'history' ? 'history-shell' : ''}">
+  app.innerHTML = `<section class="shell ${currentView === 'auth' ? 'auth-shell' : ''} ${currentView === 'change-password' ? 'first-password-shell' : ''} ${currentView === 'history' ? 'history-shell' : ''} ${currentView === 'products' ? 'products-shell' : ''}">
     <header class="topbar ${currentView === 'auth' ? 'topbar-login' : ''}" style="display: flex; justify-content: space-between; align-items: center;">
   <!-- ฝั่งซ้าย: ปุ่มย้อนกลับ (ถ้ามี) -->
   <div style="display: flex; align-items: center; gap: 0.75rem;">
@@ -598,7 +598,7 @@ async function renderProducts() {
     `;
 
     const temperaturePicker = `<div class="card" style="padding:14px; margin-bottom:12px;"><strong style="display:block; margin-bottom:10px; color:#14532d;">เลือกประเภทเมนู</strong><div style="display:flex; gap:10px;"><button type="button" class="secondary" data-temperature-choice="hot" aria-pressed="false" style="margin:0;">☕ ร้อน</button><button type="button" class="secondary" data-temperature-choice="cold" aria-pressed="false" style="margin:0;">🧊 เย็น</button></div></div>`;
-    layout(`<div class="product-selection-screen">${userInfoHtml}<div class="page-title product-page-title"><h2>เลือกรายการสินค้า</h2></div>${temperaturePicker}${productListHtml}${historyActionHtml}</div>`, false);
+    layout(`<div class="product-selection-screen">${userInfoHtml}<div class="product-selection-header"><div class="page-title product-page-title"><h2>เลือกรายการสินค้า</h2></div>${temperaturePicker}</div>${productListHtml}</div>${historyActionHtml}`, false);
     document.querySelectorAll('[data-temperature-choice]').forEach(button => button.addEventListener('click', () => {
       const selected = button.dataset.temperatureChoice;
       document.querySelectorAll('[data-temperature-choice]').forEach(choice => {

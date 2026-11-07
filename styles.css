@@ -124,6 +124,25 @@ button {
   overflow: hidden;
 }
 
+.shell.products-shell {
+  height: 100dvh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+}
+
+.products-shell .product-selection-screen {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  padding-bottom: 8px;
+}
+
 .history-scroll-area {
   flex: 1 1 auto;
   min-height: 0;
@@ -710,8 +729,17 @@ input:focus {
   margin-top: 3px;
 }
 
+.product-selection-screen .product-selection-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 6px 0;
+  background: #435f52;
+  color: #fff;
+}
+
 .product-selection-screen .product-page-title {
-  margin: 10px 0 6px;
+  margin: 0 0 6px;
 }
 
 .product-selection-screen .product-page-title h2 {
@@ -720,11 +748,6 @@ input:focus {
 
 .product-selection-screen .product-list {
   gap: 8px;
-  max-height: min(45vh, 480px);
-  overflow-y: auto;
-  overscroll-behavior-y: contain;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
 }
 
 .product-selection-screen .product {
@@ -752,8 +775,9 @@ input:focus {
   color: #000;
 }
 
-.product-selection-screen .history-action {
-  margin-top: 20px;
+.products-shell .history-action {
+  flex: 0 0 auto;
+  margin: 10px 0 0;
   display: flex;
   justify-content: center;
   flex-wrap: nowrap;
@@ -761,7 +785,7 @@ input:focus {
   width: 100%;
 }
 
-.product-selection-screen .history-action .secondary {
+.products-shell .history-action .secondary {
   flex: 1 1 0;
   width: 0;
   min-width: 0;
@@ -771,7 +795,7 @@ input:focus {
   white-space: nowrap;
 }
 
-.product-selection-screen .history-action .amount-button-icon {
+.products-shell .history-action .amount-button-icon {
   width: 24px;
   height: 24px;
   margin: -4px 4px -4px -2px;

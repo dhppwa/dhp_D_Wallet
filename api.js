@@ -386,7 +386,10 @@ async login({ loginId, phone, password }) {
     return [
       { id: '1', name: 'แบล็คคอฟฟี (เย็น)', detail: 'มูลค่า 60 บาท', image: 'public/assets/image/black-coffee.webp', color: 'orange', price: 60 },
       { id: '2', name: 'เอสเปรสโซ (เย็น)', detail: 'มูลค่า 60 บาท', image: 'public/assets/image/espresso.webp', color: 'green', price: 60 },
-      { id: '3', name: 'ชานม (เย็น)', detail: 'มูลค่า 50 บาท', image: 'public/assets/image/tea-with-milk.webp', color: 'gold', price: 50 }
+      { id: '3', name: 'ชานม (เย็น)', detail: 'มูลค่า 50 บาท', image: 'public/assets/image/tea-with-milk.webp', color: 'gold', price: 50 },
+      { id: '4', name: 'แบล็คคอฟฟี (ร้อน)', detail: 'มูลค่า 60 บาท', image: 'public/assets/image/black-coffee.webp', color: 'orange', price: 60 },
+      { id: '5', name: 'เอสเปรสโซ (ร้อน)', detail: 'มูลค่า 60 บาท', image: 'public/assets/image/espresso.webp', color: 'green', price: 60 },
+      { id: '6', name: 'ชานม (ร้อน)', detail: 'มูลค่า 50 บาท', image: 'public/assets/image/tea-with-milk.webp', color: 'gold', price: 50 }
     ];
   },
 
@@ -526,7 +529,10 @@ async login({ loginId, phone, password }) {
     const normalProductNames = {
       '1': 'แบล็คคอฟฟี (เย็น)',
       '2': 'เอสเปรสโซ (เย็น)',
-      '3': 'ชานม (เย็น)'
+      '3': 'ชานม (เย็น)',
+      '4': 'แบล็คคอฟฟี (ร้อน)',
+      '5': 'เอสเปรสโซ (ร้อน)',
+      '6': 'ชานม (ร้อน)'
     };
 
     return (bills || []).map(item => {

@@ -583,7 +583,7 @@ async function renderProducts() {
     const productListHtml = `
       <div class="product-list">
         ${products.map(p => `
-          <button class="product" data-id="${esc(p.id)}" ${usageStatus.blocked ? 'style="opacity: 0.6; cursor: not-allowed;"' : ''}>
+          <button class="product" data-id="${esc(p.id)}" data-temperature="${Number(p.id) <= 3 ? 'cold' : 'hot'}" hidden ${usageStatus.blocked ? 'style="opacity: 0.6; cursor: not-allowed;"' : ''}>
             <span class="product-icon ${esc(p.color)}">
               ${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" />` : esc(p.icon || '☕')}
             </span>
@@ -597,7 +597,18 @@ async function renderProducts() {
       </div>
     `;
 
-    layout(`<div class="product-selection-screen">${userInfoHtml}<div class="page-title product-page-title"><h2>เลือกรายการสินค้า</h2></div>${productListHtml}${historyActionHtml}</div>`, false);
+    const temperaturePicker = `<div class="card" style="padding:14px; margin-bottom:12px;"><strong style="display:block; margin-bottom:10px; color:#14532d;">เลือกรับเครื่องดื่มแบบร้อนหรือเย็น</strong><div style="display:flex; gap:10px;"><button type="button" class="secondary" data-temperature-choice="hot" aria-pressed="false" style="margin:0;">☕ ร้อน</button><button type="button" class="secondary" data-temperature-choice="cold" aria-pressed="false" style="margin:0;">🧊 เย็น</button></div></div>`;
+    layout(`<div class="product-selection-screen">${userInfoHtml}<div class="page-title product-page-title"><h2>เลือกรายการสินค้า</h2></div>${temperaturePicker}${productListHtml}${historyActionHtml}</div>`, false);
+    document.querySelectorAll('[data-temperature-choice]').forEach(button => button.addEventListener('click', () => {
+      const selected = button.dataset.temperatureChoice;
+      document.querySelectorAll('[data-temperature-choice]').forEach(choice => {
+        const active = choice === button;
+        choice.setAttribute('aria-pressed', String(active));
+        choice.style.background = active ? '#059669' : '#fff';
+        choice.style.color = active ? '#fff' : '';
+      });
+      document.querySelectorAll('.product[data-temperature]').forEach(product => { product.hidden = product.dataset.temperature !== selected; });
+    }));
     
     document.querySelector('#btn-history')?.addEventListener('click', () => renderHistory());
     document.querySelector('#btn-custom-amount')?.addEventListener('click', () => {

@@ -134,6 +134,8 @@ button {
   padding-right: 2px;
 }
 
+.product[hidden] { display: none !important; }
+
 /* ให้หัวตารางติดอยู่ในพื้นที่รายการขณะเลื่อน */
 .history-scroll-area thead th {
   position: sticky;

@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'amazon-client-';
-const CACHE_NAME = `${CACHE_PREFIX}v132`;
+const CACHE_NAME = `${CACHE_PREFIX}v133`;
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

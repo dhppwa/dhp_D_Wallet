@@ -28,6 +28,7 @@ let currentCoupon = null;
 let couponTimer = null;
 let couponChannel = null;
 let currentView = 'auth'; 
+let productSelectionSnapshot = null;
 let clientLockoutTimer = null;
 let clientLockoutCheckInProgress = false;
 let clientLockoutHandled = false;
@@ -379,7 +380,7 @@ function layout(content, back = false) {
       cleanupSubscriptions();
       if (currentView === 'coupon') await clearCouponData();
       currentCoupon = null;
-      renderProducts();
+      renderProducts({ restoreSelection: currentView === 'confirm' });
     }
   });
 
@@ -524,7 +525,9 @@ function renderForceChangePassword() {
 }
 
 // --- หน้าเลือกสินค้า ---
-async function renderProducts() {
+async function renderProducts({ restoreSelection = false } = {}) {
+  const savedSelection = restoreSelection ? productSelectionSnapshot : null;
+  productSelectionSnapshot = null;
   currentView = 'products';
   cleanupSubscriptions();
   resetInactivityTimer();
@@ -584,7 +587,7 @@ async function renderProducts() {
       { name: 'กาแฟ', ids: ['1', '2', '4', '5', '15', '16', '17', '18', '19'] },
       { name: 'ชา', ids: ['3', '6', '7', '8', '9', '10', '11'] },
       { name: 'นม / ช็อกโกแลต', ids: ['12', '13'] },
-      { name: 'น้ำผลไม้ & สมูทตี้', ids: ['14'] }
+      { name: 'น้ำผลไม้', ids: ['14'] }
     ];
     const productListHtml = productCategories.map(category => `
       <section class="product-category" hidden>
@@ -619,6 +622,11 @@ async function renderProducts() {
       document.querySelectorAll('.product[data-temperature]').forEach(product => { product.hidden = product.dataset.temperature !== selected; });
       document.querySelectorAll('.product-category').forEach(category => { category.hidden = !category.querySelector('.product:not([hidden])'); });
     }));
+    if (savedSelection) {
+      document.querySelector(`[data-temperature-choice="${savedSelection.temperature}"]`)?.click();
+      const productScreen = document.querySelector('.product-selection-screen');
+      if (productScreen) productScreen.scrollTop = savedSelection.scrollTop;
+    }
     
     document.querySelector('#btn-history')?.addEventListener('click', () => renderHistory());
     document.querySelector('#btn-custom-amount')?.addEventListener('click', () => {
@@ -634,6 +642,10 @@ async function renderProducts() {
         showAppDialog(usageStatus.reason, { title: 'ไม่สามารถใช้สิทธิ์ได้' });
         return;
       }
+      productSelectionSnapshot = {
+        temperature: el.dataset.temperature,
+        scrollTop: document.querySelector('.product-selection-screen')?.scrollTop || 0
+      };
       renderConfirm(products.find(p => p.id === el.dataset.id));
     });
 

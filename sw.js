@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'amazon-client-';
-const CACHE_NAME = `${CACHE_PREFIX}v148`;
+const CACHE_NAME = `${CACHE_PREFIX}v149`;
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -18,8 +18,11 @@ self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
     await cache.addAll(ASSETS_TO_CACHE.map(url => new Request(url, { cache: 'reload' })));
-    await self.skipWaiting();
   })());
+});
+
+self.addEventListener('message', event => {
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {

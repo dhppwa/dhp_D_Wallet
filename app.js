@@ -28,6 +28,9 @@ let currentCoupon = null;
 let couponTimer = null;
 let couponChannel = null;
 let currentView = 'auth'; 
+window.canApplyPwaUpdate = () => currentView === 'products'
+  && Boolean(document.querySelector('.product-selection-screen'))
+  && !document.querySelector('[role="dialog"], #custom-amount-dialog');
 let productSelectionSnapshot = null;
 let clientLockoutTimer = null;
 let clientLockoutCheckInProgress = false;

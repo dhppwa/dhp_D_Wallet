@@ -59,25 +59,12 @@
     <script src="config.js?v=9"></script>
     <script src="d1-client.js?v=3"></script>
   <script src="api.js?v=43"></script>
-  <script src="app.js?v=123"></script>
+  <script src="app.js?v=124"></script>
+  <script src="pwa-update.js?v=1"></script>
 
     <!-- 📌 PWA Service Worker & Install Prompt Handler (ไว้ท้ายสุดจุดเดียว) -->
     <script>
       // 1. ลงทะเบียน Service Worker ทันที เพื่อให้ Chrome ตรวจสอบ PWA ได้ในหน้าแรก
-      if ('serviceWorker' in navigator) {
-        let refreshingForUpdate = false;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          if (refreshingForUpdate) return;
-          refreshingForUpdate = true;
-          window.location.reload();
-        });
-        navigator.serviceWorker.register('./sw.js', { scope: './', updateViaCache: 'none' })
-          .then(async (reg) => {
-            await reg.update();
-            console.log('SW Registered:', reg.scope);
-          })
-          .catch((err) => console.error('SW Registration Failed:', err));
-      }
 
       // เก็บเหตุการณ์ติดตั้งไว้ แล้วเรียกหน้าติดตั้งของ Chrome จากการแตะครั้งแรกบนหน้า Login
       // เบราว์เซอร์ไม่อนุญาตให้บังคับเปิดกล่องติดตั้งเองทันทีโดยไม่มีการแตะของผู้ใช้

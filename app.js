@@ -610,7 +610,6 @@ async function renderProducts({ restoreSelection = false } = {}) {
             </span>
             <span>
               <strong>${esc(p.name)} <span class="product-free-label">FREE</span></strong>
-              <small>${esc(p.detail)}</small>
             </span>
             ${usageStatus.blocked ? '<i>ใช้สิทธิ์ครบแล้ว</i>' : ''}
           </button>
@@ -850,7 +849,7 @@ function renderConfirm(product) {
   const user = session.user || {};
 
   const productVisual = product.image ? `<img class="confirm-product-image" src="${esc(product.image)}" alt="${esc(product.name)}">` : `<span class="confirm-product-fallback" aria-hidden="true">${esc(product.icon || '☕')}</span>`;
-  layout(`<div class="page-title"></div><div class="card selected product-confirm">${productVisual}<div><strong>${esc(product.name)}</strong><em>${esc(product.detail || '')}</em></div></div><form class="card details confirmation-action" id="coupon-form"><button class="primary" type="submit">ยืนยันการใช้สิทธิ์ <span>→</span></button></form>`, true);
+  layout(`<div class="page-title"></div><div class="card selected product-confirm">${productVisual}<div><strong>${esc(product.name)}</strong></div></div><form class="card details confirmation-action" id="coupon-form"><button class="primary" type="submit">ยืนยันการใช้สิทธิ์ <span>→</span></button></form>`, true);
   
   document.querySelector('#coupon-form').onsubmit = async e => {
     e.preventDefault(); 

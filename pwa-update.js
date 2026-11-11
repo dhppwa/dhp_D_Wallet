@@ -4,6 +4,7 @@
   let registration = null;
   let pending = false;
   let applying = false;
+  let controllerChanged = false;
   let banner = null;
   const hasExistingController = Boolean(navigator.serviceWorker.controller);
 
@@ -13,23 +14,20 @@
       banner = document.createElement('div');
       banner.setAttribute('role', 'status');
       banner.style.cssText = 'position:fixed;z-index:90000;left:50%;top:calc(8px + env(safe-area-inset-top, 0px));transform:translateX(-50%);width:min(94%,420px);box-sizing:border-box;padding:10px 12px;border-radius:12px;background:#123b68;color:white;box-shadow:0 4px 18px #0004;display:flex;align-items:center;gap:10px;font:600 14px system-ui,sans-serif;';
-      banner.innerHTML = '<span style="flex:1"></span><button type="button" style="border:0;border-radius:8px;padding:8px 12px;font:inherit;white-space:nowrap;">อัปเดตเลย</button>';
-      banner.querySelector('button').addEventListener('click', () => {
-        if (applying || !window.canApplyPwaUpdate?.()) return;
-        applying = true;
-        if (registration?.waiting) {
-          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-        } else {
-          window.location.reload();
-        }
-      });
+      banner.innerHTML = '<span style="flex:1"></span>';
       document.body.appendChild(banner);
     }
     const safe = Boolean(window.canApplyPwaUpdate?.());
-    banner.querySelector('span').textContent = safe ? 'มีเวอร์ชันใหม่พร้อมใช้งาน' : 'มีเวอร์ชันใหม่ รอทำรายการให้เสร็จก่อน';
-    const button = banner.querySelector('button');
-    button.disabled = !safe || applying;
-    button.style.opacity = button.disabled ? '.55' : '1';
+    banner.querySelector('span').textContent = applying ? 'กำลังอัปเดตแอป...' : 'มีเวอร์ชันใหม่ รอทำรายการให้เสร็จก่อน';
+    if (!safe || applying || document.hidden) return;
+    if (registration?.waiting) {
+      applying = true;
+      banner.querySelector('span').textContent = 'กำลังอัปเดตแอป...';
+      registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+    } else if (controllerChanged) {
+      applying = true;
+      window.location.reload();
+    }
   }
 
   function markPending() {
@@ -38,9 +36,8 @@
   }
 
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (!hasExistingController) return;
     if (applying) window.location.reload();
-    else markPending();
+    else if (hasExistingController || pending) { controllerChanged = true; markPending(); }
   });
 
   async function checkForUpdate() {

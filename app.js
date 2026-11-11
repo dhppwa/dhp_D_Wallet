@@ -28,9 +28,16 @@ let currentCoupon = null;
 let couponTimer = null;
 let couponChannel = null;
 let currentView = 'auth'; 
-window.canApplyPwaUpdate = () => currentView === 'products'
-  && Boolean(document.querySelector('.product-selection-screen'))
-  && !document.querySelector('[role="dialog"], #custom-amount-dialog');
+window.canApplyPwaUpdate = () => {
+  if (document.querySelector('[role="dialog"], #custom-amount-dialog')) return false;
+  if (currentView === 'products') return Boolean(document.querySelector('.product-selection-screen'));
+  if (currentView !== 'auth') return false;
+  const form = document.querySelector('#auth-form');
+  if (!form || document.activeElement?.matches('input, textarea, select') || form.querySelector('button[type="submit"]:disabled')) return false;
+  return [...form.querySelectorAll('input')].every(input => input.type === 'checkbox'
+    ? input.checked === input.defaultChecked
+    : input.value === input.defaultValue);
+};
 let productSelectionSnapshot = null;
 let clientLockoutTimer = null;
 let clientLockoutCheckInProgress = false;
@@ -383,7 +390,7 @@ function layout(content, back = false) {
       cleanupSubscriptions();
       if (currentView === 'coupon') await clearCouponData();
       currentCoupon = null;
-      renderProducts({ restoreSelection: currentView === 'confirm' });
+      renderProducts({ restoreSelection: ['confirm', 'coupon'].includes(currentView) });
     }
   });
 
@@ -637,6 +644,10 @@ async function renderProducts({ restoreSelection = false } = {}) {
         showAppDialog(usageStatus.reason, { title: 'ไม่สามารถใช้สิทธิ์ได้' });
         return;
       }
+      productSelectionSnapshot = {
+        temperature: document.querySelector('[data-temperature-choice][aria-pressed="true"]')?.dataset.temperatureChoice || null,
+        scrollTop: document.querySelector('.product-selection-screen')?.scrollTop || 0
+      };
       openCustomAmountDialog();
     });
 

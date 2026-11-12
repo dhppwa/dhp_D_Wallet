@@ -402,9 +402,11 @@ async login({ loginId, phone, password }) {
       { id: '16', name: 'คาปูชิโน (ร้อน)', detail: 'มูลค่า 50 บาท', color: 'orange', price: 50 },
       { id: '17', name: 'ลาเต้อเมซอน (ร้อน)', detail: 'มูลค่า 55 บาท', color: 'orange', price: 55 },
       { id: '18', name: 'มอคค่า (ร้อน)', detail: 'มูลค่า 55 บาท', color: 'orange', price: 55 },
-      { id: '19', name: 'ไวท์ ช็อก มัคคิอาโต้ (ร้อน)', detail: 'มูลค่า 60 บาท', color: 'gold', price: 60 }
+      { id: '19', name: 'ไวท์ ช็อก มัคคิอาโต้ (ร้อน)', detail: 'มูลค่า 60 บาท', color: 'gold', price: 60 },
+      { id: '20', name: 'นมสด (ร้อน)', detail: 'มูลค่า 45 บาท', color: 'gold', price: 45 },
+      { id: '21', name: 'นมสด (เย็น)', detail: 'มูลค่า 50 บาท', color: 'gold', price: 50 }
     ].map(product => {
-      const image = ['6', '8', '12'].includes(product.id)
+      const image = ['6', '8', '12', '20'].includes(product.id)
         ? 'public/assets/image/hot-drink-shared-cutout.png'
         : `public/assets/image/product-${product.id}-cutout.png`;
       return { ...product, image };
@@ -563,7 +565,9 @@ async login({ loginId, phone, password }) {
       '16': 'คาปูชิโน (ร้อน)',
       '17': 'ลาเต้อเมซอน (ร้อน)',
       '18': 'มอคค่า (ร้อน)',
-      '19': 'ไวท์ ช็อก มัคคิอาโต้ (ร้อน)'
+      '19': 'ไวท์ ช็อก มัคคิอาโต้ (ร้อน)',
+      '20': 'นมสด (ร้อน)',
+      '21': 'นมสด (เย็น)'
     };
 
     return (bills || []).map(item => {

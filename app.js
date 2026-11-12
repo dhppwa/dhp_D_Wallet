@@ -596,7 +596,7 @@ async function renderProducts({ restoreSelection = false } = {}) {
     const productCategories = [
       { name: 'กาแฟ', ids: ['1', '2', '4', '5', '15', '16', '17', '18', '19'] },
       { name: 'ชา', ids: ['3', '6', '7', '8', '9', '10', '11'] },
-      { name: 'นม / ช็อกโกแลต', ids: ['12', '13'] },
+      { name: 'นม / ช็อกโกแลต', ids: ['12', '13', '20', '21'] },
       { name: 'น้ำผลไม้', ids: ['14'] }
     ];
     const productListHtml = productCategories.map(category => `

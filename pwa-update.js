@@ -1,7 +1,7 @@
 (function () {
   if (!('serviceWorker' in navigator)) return;
   const successKey = 'pwa-update-completed';
-  let registration = null, pending = false, applying = false, controllerChanged = false, dialog = null, failureTimer = null;
+  let registration = null, pending = false, applying = false, controllerChanged = false, dialog = null, failureTimer = null, dismissedAfterFailure = false;
   const hasExistingController = Boolean(navigator.serviceWorker.controller);
 
   function showSuccess() {
@@ -23,7 +23,7 @@
   }
 
   function refreshDialog() {
-    if (!pending || applying || document.hidden) return;
+    if (!pending || applying || document.hidden || dismissedAfterFailure) return;
     if (dialog) return;
     dialog = document.createElement('div');
     dialog.setAttribute('role', 'alertdialog');
@@ -31,11 +31,25 @@
     dialog.style.cssText = 'position:fixed;inset:0;z-index:100001;display:grid;place-items:center;padding:20px;background:#0008;font:600 16px system-ui,sans-serif;';
     dialog.innerHTML = '<div style="width:min(100%,340px);box-sizing:border-box;padding:24px;border-radius:16px;background:#fff;text-align:center;color:#172554;box-shadow:0 8px 30px #0004;"><div data-update-message>มีอัปเดตเป็นเวอร์ชันใหม่</div><div data-update-progress hidden style="height:8px;overflow:hidden;border-radius:8px;background:#dbeafe;margin-top:18px;"><div style="height:100%;width:40%;background:#2563eb;animation:pwa-update-progress 1.1s ease-in-out infinite alternate;"></div></div><button type="button" style="margin-top:18px;border:0;border-radius:9px;padding:10px 25px;background:#2563eb;color:#fff;font:inherit;">อัปเดต</button><style>@keyframes pwa-update-progress{from{transform:translateX(-100%)}to{transform:translateX(250%)}}</style></div>';
     const button = dialog.querySelector('button');
+    const cancelButton = document.createElement('button');
+    cancelButton.type = 'button';
+    cancelButton.textContent = 'ยกเลิก';
+    cancelButton.hidden = true;
+    cancelButton.style.cssText = 'margin:18px 8px 0 0;border:0;border-radius:9px;padding:10px 20px;background:#e2e8f0;color:#334155;font:inherit;';
+    button.before(cancelButton);
+    cancelButton.addEventListener('click', () => {
+      if (applying) return;
+      clearTimeout(failureTimer);
+      dismissedAfterFailure = true;
+      dialog.remove();
+      dialog = null;
+    });
     button.addEventListener('click', () => {
       if (applying) return;
       if (!registration?.waiting && !controllerChanged) return;
       applying = true;
       button.hidden = true;
+      cancelButton.hidden = true;
       dialog.querySelector('[data-update-message]').textContent = 'กรุณารอสักครู่ กำลังอัปเดต';
       dialog.querySelector('[data-update-progress]').hidden = false;
       if (registration?.waiting) {
@@ -45,6 +59,7 @@
           dialog.querySelector('[data-update-message]').textContent = 'อัปเดตไม่สำเร็จ กรุณาลองอีกครั้ง';
           dialog.querySelector('[data-update-progress]').hidden = true;
           button.hidden = false;
+          cancelButton.hidden = false;
         }, 20000);
         registration.waiting.postMessage({ type: 'SKIP_WAITING' });
       } else reloadUpdatedApp();

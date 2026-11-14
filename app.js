@@ -19,6 +19,8 @@ document.addEventListener('touchstart', function (e) {
 const getApi = () => window.api;
 const app = document.querySelector('#app');
 const toast = document.querySelector('#toast');
+// เปลี่ยนเลขท้ายเมื่อ Build ใหม่ในวันเดียวกัน (YYMMDD-ลำดับครั้งที่ Build)
+const APP_BUILD_VERSION = '261114-2';
 const SESSION_KEY = 'benefit-session';
 const SAVED_LOGIN_KEY = 'benefit-saved-login';
 const FIRST_LOGIN_ID_KEY = 'benefit-first-login-id';
@@ -377,6 +379,7 @@ function layout(content, back = false) {
   <div class="topbar-actions" style="display: flex; align-items: center; gap: 0.5rem;">
     ${currentView === 'coupon' ? '<div class="expiry coupon-topbar-expiry"><span>⏱</span><strong id="countdown">03:00</strong></div>' : ''}
     ${session && !['confirm', 'coupon', 'history'].includes(currentView) ? '<button class="logout" id="logout" type="button" aria-label="ออกจากระบบ" title="ออกจากระบบ"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 3v18"/></svg></button>' : ''}
+    <span class="app-build-version" aria-label="เวอร์ชัน ${APP_BUILD_VERSION}">${APP_BUILD_VERSION}</span>
   </div>
 </header>
     ${content}

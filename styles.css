@@ -181,6 +181,7 @@ button {
 
 
 .topbar {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -331,6 +332,16 @@ button {
   stroke-width: 2.4;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.app-build-version {
+  flex: 0 0 auto;
+  pointer-events: none;
+  color: #718096;
+  font-size: .55rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  white-space: nowrap;
 }
 
 .topbar p {

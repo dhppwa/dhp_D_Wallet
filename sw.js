@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'amazon-client-';
-const CACHE_NAME = `${CACHE_PREFIX}v163`;
+const CACHE_NAME = `${CACHE_PREFIX}v166`;
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -18,6 +18,13 @@ self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
     await cache.addAll(ASSETS_TO_CACHE.map(url => new Request(url, { cache: 'reload' })));
+    const response = await fetch(new Request('./index.html', { cache: 'reload' }));
+    if (!response.ok) throw new Error('Cannot cache app page');
+    const html = await response.clone().text();
+    await cache.put('./index.html', response);
+    const files = [...html.matchAll(/(?:src|href)=["']([^"']+\.(?:js|css)(?:\?[^"']*)?)["']/gi)]
+      .map(match => match[1]).filter(path => !/^(?:https?:)?\/\//i.test(path));
+    await cache.addAll([...new Set(files)].map(path => new Request(path, { cache: 'reload' })));
   })());
 });
 
@@ -40,6 +47,14 @@ self.addEventListener('fetch', event => {
 
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
+    if (event.request.mode === 'navigate') {
+      const page = await cache.match('./index.html');
+      if (page) return page;
+    }
+    if (['script', 'style'].includes(event.request.destination)) {
+      const cached = await cache.match(event.request);
+      if (cached) return cached;
+    }
     try {
       const response = await fetch(new Request(event.request, { cache: 'no-store' }));
       if (response.ok) await cache.put(event.request, response.clone());

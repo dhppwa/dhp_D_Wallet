@@ -34,7 +34,6 @@
     const cancelButton = document.createElement('button');
     cancelButton.type = 'button';
     cancelButton.textContent = 'ยกเลิก';
-    cancelButton.hidden = true;
     cancelButton.style.cssText = 'margin:18px 8px 0 0;border:0;border-radius:9px;padding:10px 20px;background:#e2e8f0;color:#334155;font:inherit;';
     button.before(cancelButton);
     cancelButton.addEventListener('click', () => {

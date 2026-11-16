@@ -588,7 +588,7 @@ async function renderProducts({ restoreSelection = false } = {}) {
         <p class="product-user-info-usage" style="color: #059669; font-weight: bold;">
           ${usageStatus.unlimitedAll ? 'สิทธิ์ทั้งหมด : ไม่จำกัด' : `สิทธิ์ทั้งหมด : ${usedCount}/${allLimitDisplay} สิทธิ์`}
         </p>
-        ${usageStatus.unlimitedAll ? '' : `<p class="product-user-info-period" style="color:#475569; font-weight:600;">ใช้ได้ ${usageStatus.periodLimit} สิทธิ์ / ${usageStatus.periodLabel} (ใช้แล้ว ${usageStatus.periodUsed})</p>`}
+        ${usageStatus.unlimitedAll ? '' : `<p class="product-user-info-period" style="color:#475569; font-weight:600;">${Number(usageStatus.periodLimit) > 0 && ['วัน', 'เดือน', 'ปี'].includes(usageStatus.periodLabel) ? `ใช้ได้ ${usageStatus.periodLimit} สิทธิ์ ต่อ${usageStatus.periodLabel}` : 'ใช้ได้ไม่กำหนด สิทธิ์'} (ใช้แล้ว ${usageStatus.periodUsed})</p>`}
         ${usageStatus.blocked ? `<p class="product-user-info-warning" style="color:#ef4444; font-size:0.82rem; font-weight:bold;">⚠️ ${esc(usageStatus.reason)}</p>` : ''}
       </div>
     `;

@@ -20,7 +20,7 @@ const getApi = () => window.api;
 const app = document.querySelector('#app');
 const toast = document.querySelector('#toast');
 // เปลี่ยนเลขท้ายเมื่อ Build ใหม่ในวันเดียวกัน (YYMMDD-ลำดับครั้งที่ Build)
-const APP_BUILD_VERSION = '261116-1';
+const APP_BUILD_VERSION = '261116-2';
 const SESSION_KEY = 'benefit-session';
 const SAVED_LOGIN_KEY = 'benefit-saved-login';
 const FIRST_LOGIN_ID_KEY = 'benefit-first-login-id';
@@ -568,7 +568,7 @@ async function renderProducts({ restoreSelection = false } = {}) {
 
     const usageStatus = (api && typeof api.getUsageLimitStatus === 'function')
       ? await api.getUsageLimitStatus(userPhone)
-      : { blocked: false, usedCount: Number(user.All_Use ?? 0), allLimit: Number(user.All_Limit ?? 0), unlimitedAll: Boolean(user.LimitAll), periodUsed: 0, periodLimit: Number(user.Day_Limit ?? 0), periodLabel: ['วัน', 'เดือน', 'ปี'][Number(user.LimitType ?? 0)] || 'วัน', reason: '' };
+      : { blocked: false, usedCount: Number(user.All_Use ?? 0), allLimit: Number(user.All_Limit ?? 0), unlimitedAll: Boolean(user.LimitAll), periodUsed: 0, periodLimit: Number(user.Day_Limit ?? 0), periodLabel: user.LimitType == null || String(user.LimitType).trim() === '' ? 'ไม่กำหนด' : (['วัน', 'เดือน', 'ปี'][Number(user.LimitType)] || 'ไม่กำหนด'), reason: '' };
 
     const usedCount = usageStatus.usedCount;
     const allLimitDisplay = usageStatus.allLimit;

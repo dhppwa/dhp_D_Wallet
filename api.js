@@ -144,8 +144,8 @@ async function getUsageLimitStatus(phone) {
     unlimitedAll,
     periodUsed,
     periodLimit,
-    limitType: Number(user.LimitType ?? 0),
-    periodLabel: period.label
+    limitType: user.LimitType == null || String(user.LimitType).trim() === '' ? null : Number(user.LimitType),
+    periodLabel: user.LimitType == null || String(user.LimitType).trim() === '' || ![0, 1, 2].includes(Number(user.LimitType)) ? 'ไม่กำหนด' : period.label
   };
 }
 
@@ -268,7 +268,7 @@ async login({ loginId, phone, password }) {
     All_Limit: Number(data.All_Limit ?? 0),
     Day_Limit: Number(data.Day_Limit ?? 0),
     LimitAll: Boolean(data.LimitAll),
-    LimitType: Number(data.LimitType ?? 0),
+    LimitType: data.LimitType == null || String(data.LimitType).trim() === '' ? null : Number(data.LimitType),
     Username: data.Username || '',
     Email: data.Email || '',
     LoginType: Number(data.LoginType ?? 0),
@@ -317,7 +317,7 @@ async login({ loginId, phone, password }) {
       All_Limit: Number(data.All_Limit ?? 50),
       Day_Limit: Number(data.Day_Limit ?? 1),
       LimitAll: Boolean(data.LimitAll),
-      LimitType: Number(data.LimitType ?? 0),
+      LimitType: data.LimitType == null || String(data.LimitType).trim() === '' ? null : Number(data.LimitType),
       Access_Level: Number(data.Access_Level ?? 0),
       isUse: Boolean(data.IsUse),
       IsUse: Boolean(data.IsUse),

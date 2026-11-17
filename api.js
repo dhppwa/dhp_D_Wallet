@@ -101,7 +101,7 @@ async function getUsageLimitStatus(phone) {
 
   const { data: user, error: userErr } = await supabase
     .from('Cafe_Amazon_Promosion_House')
-    .select('ID, All_Use, All_Limit, Day_Limit, LimitAll, LimitType')
+    .select('ID, All_Use, All_Limit, Day_Limit, LimitAll, LimitType, Discount_Expires_On')
     .eq('Phone_No', cleanPhone)
     .maybeSingle();
   if (userErr || !user) throw new Error('ไม่พบข้อมูลสมาชิกในระบบ');
@@ -110,6 +110,9 @@ async function getUsageLimitStatus(phone) {
   const allLimit = Number(user.All_Limit ?? 0);
   const unlimitedAll = Boolean(user.LimitAll);
   const periodLimit = Number(user.Day_Limit ?? 0);
+  const expiry = String(user.Discount_Expires_On || '').slice(0, 10);
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Bangkok', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  const expired = Boolean(expiry && expiry < today);
   const period = getLimitPeriod(user.LimitType);
 
   const { data: bills, error: billErr } = await supabase
@@ -128,7 +131,7 @@ async function getUsageLimitStatus(phone) {
   const invalidPeriodLimit = !unlimitedAll && (!Number.isFinite(periodLimit) || periodLimit <= 0);
   const totalBlocked = !unlimitedAll && !invalidTotalLimit && usedCount >= allLimit;
   const periodBlocked = !unlimitedAll && !invalidPeriodLimit && periodUsed >= periodLimit;
-  const reason = invalidTotalLimit || invalidPeriodLimit
+  const reason = expired ? 'สิทธิ์แลกสินค้าหมดอายุแล้ว กรุณาติดต่อผู้ดูแลระบบ' : invalidTotalLimit || invalidPeriodLimit
     ? 'ข้อมูลการจำกัดสิทธิ์ไม่ถูกต้อง กรุณาติดต่อผู้ดูแลระบบ'
     : totalBlocked
       ? `คุณใช้สิทธิ์ครบทั้งหมด ${allLimit} สิทธิ์แล้ว`
@@ -137,13 +140,14 @@ async function getUsageLimitStatus(phone) {
         : '';
 
   return {
-    blocked: invalidTotalLimit || invalidPeriodLimit || totalBlocked || periodBlocked,
+    blocked: expired || invalidTotalLimit || invalidPeriodLimit || totalBlocked || periodBlocked,
     reason,
     usedCount,
     allLimit,
     unlimitedAll,
     periodUsed,
     periodLimit,
+    expiresOn: expiry || null,
     limitType: user.LimitType == null || String(user.LimitType).trim() === '' ? null : Number(user.LimitType),
     periodLabel: user.LimitType == null || String(user.LimitType).trim() === '' || ![0, 1, 2].includes(Number(user.LimitType)) ? 'ไม่กำหนด' : period.label
   };

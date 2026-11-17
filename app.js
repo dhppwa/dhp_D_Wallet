@@ -20,7 +20,7 @@ const getApi = () => window.api;
 const app = document.querySelector('#app');
 const toast = document.querySelector('#toast');
 // เปลี่ยนเลขท้ายเมื่อ Build ใหม่ในวันเดียวกัน (YYMMDD-ลำดับครั้งที่ Build)
-const APP_BUILD_VERSION = '261116-2';
+const APP_BUILD_VERSION = '261117-1';
 const SESSION_KEY = 'benefit-session';
 const SAVED_LOGIN_KEY = 'benefit-saved-login';
 const FIRST_LOGIN_ID_KEY = 'benefit-first-login-id';
@@ -588,7 +588,7 @@ async function renderProducts({ restoreSelection = false } = {}) {
         <p class="product-user-info-usage" style="color: #059669; font-weight: bold;">
           ${usageStatus.unlimitedAll ? 'สิทธิ์ทั้งหมด : ไม่จำกัด' : `สิทธิ์ทั้งหมด : ${usedCount}/${allLimitDisplay} สิทธิ์`}
         </p>
-        ${usageStatus.unlimitedAll ? '' : `<p class="product-user-info-period" style="color:#475569; font-weight:600;">${Number(usageStatus.periodLimit) > 0 && ['วัน', 'เดือน', 'ปี'].includes(usageStatus.periodLabel) ? `ใช้ได้ ${usageStatus.periodLimit} สิทธิ์ ต่อ${usageStatus.periodLabel}` : 'ใช้ได้ไม่กำหนด สิทธิ์'} (ใช้แล้ว ${usageStatus.periodUsed})</p>`}
+        ${usageStatus.unlimitedAll ? '' : `<p class="product-user-info-period" style="color:#475569; font-weight:600;">ใช้ได้ ${usageStatus.periodLimit} สิทธิ์ / ${esc(usageStatus.periodLabel)} (${{ 'วัน': 'วันนี้', 'เดือน': 'เดือนนี้', 'ปี': 'ปีนี้' }[usageStatus.periodLabel] || 'ไม่กำหนด'}ใช้แล้ว ${usageStatus.periodUsed})</p>`}
         ${usageStatus.blocked ? `<p class="product-user-info-warning" style="color:#ef4444; font-size:0.82rem; font-weight:bold;">⚠️ ${esc(usageStatus.reason)}</p>` : ''}
       </div>
     `;

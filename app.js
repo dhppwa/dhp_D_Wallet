@@ -20,7 +20,7 @@ const getApi = () => window.api;
 const app = document.querySelector('#app');
 const toast = document.querySelector('#toast');
 // เปลี่ยนเลขท้ายเมื่อ Build ใหม่ในวันเดียวกัน (YYMMDD-ลำดับครั้งที่ Build)
-const APP_BUILD_VERSION = '261118-1';
+const APP_BUILD_VERSION = '261124-1';
 const SESSION_KEY = 'benefit-session';
 const SAVED_LOGIN_KEY = 'benefit-saved-login';
 const FIRST_LOGIN_ID_KEY = 'benefit-first-login-id';
@@ -299,7 +299,7 @@ function isIosDevice() {
 }
 
 function showInstallGuide() {
-  if (installGuideShown || isInstalledPwa() || localStorage.getItem(INSTALL_GUIDE_DISMISSED_KEY) === '1') return;
+  if (installGuideShown || isInstalledPwa()) return;
   const ios = isIosDevice();
   installGuideShown = true;
   document.body.insertAdjacentHTML('beforeend', `
@@ -309,21 +309,14 @@ function showInstallGuide() {
         <h2 style="margin:6px 0; font-size:1.3rem; color:#194832;">ติดตั้งแอป</h2>
         <p style="margin:0 0 16px; color:#766b5e; line-height:1.55;">${ios ? 'แตะปุ่ม Share (□↑) ใน Safari แล้วเลือก “Add to Home Screen” เพื่อเพิ่มแอปลงหน้าจอหลัก' : 'ติดตั้ง D Coupon เพื่อเปิดใช้งานได้สะดวกยิ่งขึ้น'}</p>
         <div style="display:flex; justify-content:center; gap:10px;">
-          <button id="btn-dismiss-install-guide" type="button" style="padding:10px 14px; border-radius:10px; background:#e8efe4; color:#194832; font-weight:700;">ภายหลัง</button>
           ${ios ? '' : '<button id="btn-install-pwa" type="button" style="padding:10px 14px; border-radius:10px; background:#256b45; color:#fff; font-weight:700;">ติดตั้งแอป</button>'}
         </div>
       </div>
     </div>`);
   const guide = document.querySelector('#pwa-install-guide');
-  document.querySelector('#btn-dismiss-install-guide').onclick = () => {
-    localStorage.setItem(INSTALL_GUIDE_DISMISSED_KEY, '1');
-    guide.remove();
-  };
   document.querySelector('#btn-install-pwa')?.addEventListener('click', async () => {
     const opened = await window.requestPwaInstall?.();
-    if (!opened) showToast('โปรดติดตั้งจากเมนูเบราว์เซอร์');
-    localStorage.setItem(INSTALL_GUIDE_DISMISSED_KEY, '1');
-    guide.remove();
+    if (!opened) guide.querySelector('p').textContent = 'กรุณาติดตั้งแอปจากเมนูเบราว์เซอร์ แล้วเปิดจากไอคอนบนหน้าจอหลัก';
   });
 }
 
@@ -339,10 +332,8 @@ function showInstalledPwaNotice() {
         <div style="font-size:36px;">✅</div>
         <h2 style="margin:6px 0; font-size:1.3rem; color:#194832;">ติดตั้งแอปแล้ว</h2>
         <p style="margin:0 0 16px; color:#766b5e; line-height:1.55;">กรุณาปิดหน้าเว็บนี้ แล้วเปิดแอปจากไอคอนที่เพิ่งติดตั้งบนหน้าจอหลัก</p>
-        <button id="btn-close-installed-notice" type="button" style="padding:10px 14px; border:0; border-radius:10px; background:#256b45; color:#fff; font-weight:700;">รับทราบ</button>
       </section>
     </div>`);
-  document.querySelector('#btn-close-installed-notice').onclick = () => document.querySelector('#pwa-installed-notice')?.remove();
 }
 
 window.addEventListener('pwa-installed', showInstalledPwaNotice);

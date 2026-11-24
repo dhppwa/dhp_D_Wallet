@@ -59,7 +59,7 @@
     <script src="config.js?v=9"></script>
     <script src="d1-client.js?v=3"></script>
   <script src="api.js?v=47"></script>
-  <script src="app.js?v=144"></script>
+  <script src="app.js?v=146"></script>
   <script src="pwa-update.js?v=6"></script>
 
     <!-- 📌 PWA Service Worker & Install Prompt Handler (ไว้ท้ายสุดจุดเดียว) -->
@@ -80,12 +80,13 @@
         if (!deferredInstallPrompt || window.matchMedia('(display-mode: standalone)').matches) return;
         try {
           await deferredInstallPrompt.prompt();
-          await deferredInstallPrompt.userChoice;
-          return true;
+          const choice = await deferredInstallPrompt.userChoice;
+          return choice.outcome === 'accepted';
         } catch (err) {
           console.warn('ไม่สามารถเปิดหน้าติดตั้ง PWA:', err);
         } finally {
           deferredInstallPrompt = null;
+          window.pwaInstallReady = false;
         }
       };
 

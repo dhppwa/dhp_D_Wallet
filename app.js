@@ -20,7 +20,7 @@ const getApi = () => window.api;
 const app = document.querySelector('#app');
 const toast = document.querySelector('#toast');
 // เปลี่ยนเลขท้ายเมื่อ Build ใหม่ในวันเดียวกัน (YYMMDD-ลำดับครั้งที่ Build)
-const APP_BUILD_VERSION = '261124-1';
+const APP_BUILD_VERSION = '261124-2';
 const SESSION_KEY = 'benefit-session';
 const SAVED_LOGIN_KEY = 'benefit-saved-login';
 const FIRST_LOGIN_ID_KEY = 'benefit-first-login-id';
@@ -307,7 +307,7 @@ function showInstallGuide() {
       <div style="width:min(100%,360px); padding:22px; border-radius:18px; background:#fffaf4; color:#2c241d; box-shadow:0 20px 45px rgba(0,0,0,.28); text-align:center;">
         <div style="font-size:36px;">📲</div>
         <h2 style="margin:6px 0; font-size:1.3rem; color:#194832;">ติดตั้งแอป</h2>
-        <p style="margin:0 0 16px; color:#766b5e; line-height:1.55;">${ios ? 'แตะปุ่ม Share (□↑) ใน Safari แล้วเลือก “Add to Home Screen” เพื่อเพิ่มแอปลงหน้าจอหลัก' : 'ติดตั้ง D Coupon เพื่อเปิดใช้งานได้สะดวกยิ่งขึ้น'}</p>
+        ${ios ? `<div style="margin:12px 0 16px; color:#334155; text-align:left; line-height:1.6; font-size:.95rem;"><div>1. แตะปุ่ม Share <img src="https://ipcdn-web.apple.com/assets/v2/web/4196ed8d-2a2d-406e-8b07-dd180beea925" alt="แชร์" style="width:22px; height:22px; object-fit:contain; vertical-align:middle;"></div><div>2. แตะ ดูเพิ่มเติม <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.468.0/icons/chevron-down.svg" alt="ลูกศรลง" style="width:20px; height:20px; vertical-align:middle;"></div><div>3. กด <img src="https://ipcdn-web.apple.com/assets/v2/web/1855ea81-5934-4f9f-81c6-33429e1139e0" alt="เพิ่มไปยังหน้าจอโฮม" style="width:22px; height:22px; object-fit:contain; vertical-align:middle;"> Add to Home Screen</div><div>4. กด เพิ่ม ที่มุมบนขวา</div><p style="margin:12px 0 0; color:#766b5e; text-align:center;">เพื่อเพิ่มแอปลงหน้าจอหลัก</p></div>` : '<p style="margin:0 0 16px; color:#766b5e; line-height:1.55;">ติดตั้ง D Coupon เพื่อเปิดใช้งานได้สะดวกยิ่งขึ้น</p>'}
         <div style="display:flex; justify-content:center; gap:10px;">
           ${ios ? '' : '<button id="btn-install-pwa" type="button" style="padding:10px 14px; border-radius:10px; background:#256b45; color:#fff; font-weight:700;">ติดตั้งแอป</button>'}
         </div>
@@ -323,6 +323,8 @@ function showInstallGuide() {
 window.addEventListener('pwa-install-available', showInstallGuide);
 
 function showInstalledPwaNotice() {
+  if (isInstalledPwa()) return;
+  window.close();
   document.querySelector('#pwa-install-guide')?.remove();
   localStorage.setItem(INSTALL_GUIDE_DISMISSED_KEY, '1');
   document.querySelector('#pwa-installed-notice')?.remove();

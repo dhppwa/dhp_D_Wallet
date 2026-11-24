@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'amazon-client-';
-const CACHE_NAME = `${CACHE_PREFIX}v183`;
+const CACHE_NAME = `${CACHE_PREFIX}v184`;
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -29,7 +29,19 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('message', event => {
-  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
+  if (event.data?.type === 'SKIP_WAITING') event.waitUntil(self.skipWaiting());
+  if (event.data?.type === 'GET_BUILD_VERSION' && event.ports[0]) {
+    const port = event.ports[0];
+    event.waitUntil((async () => {
+      const cache = await caches.open(CACHE_NAME);
+      const page = await cache.match('./index.html');
+      const html = page ? await page.text() : '';
+      const scriptPath = html.match(/<script\s+src=["'](app\.js(?:\?[^"']*)?)["']/i)?.[1];
+      const script = scriptPath && await cache.match(scriptPath);
+      const match = script && (await script.text()).match(/const\s+APP_BUILD_VERSION\s*=\s*['"]([^'"]+)['"]/);
+      port.postMessage({ version: match?.[1] || null });
+    })().catch(() => port.postMessage({ version: null })));
+  }
 });
 
 self.addEventListener('activate', event => {

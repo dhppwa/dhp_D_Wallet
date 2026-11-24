@@ -3,6 +3,18 @@
   const successKey = 'pwa-update-completed';
   let registration = null, pending = false, applying = false, controllerChanged = false, dialog = null, failureTimer = null, dismissedAfterFailure = false;
   const hasExistingController = Boolean(navigator.serviceWorker.controller);
+  let updateCandidate = null, updateCheckSequence = 0, targetWorker = null, reloadStarted = false;
+
+  function getWorkerVersion(worker) {
+    return new Promise(resolve => {
+      if (!worker || typeof MessageChannel === 'undefined') return resolve(null);
+      const channel = new MessageChannel();
+      const timer = setTimeout(() => { channel.port1.close(); resolve(null); }, 1500);
+      channel.port1.onmessage = event => { clearTimeout(timer); channel.port1.close(); resolve(event.data?.version || null); };
+      try { worker.postMessage({ type: 'GET_BUILD_VERSION' }, [channel.port2]); }
+      catch (_) { clearTimeout(timer); channel.port1.close(); resolve(null); }
+    });
+  }
 
   function showSuccess() {
     try {
@@ -18,6 +30,8 @@
   }
 
   function reloadUpdatedApp() {
+    if (reloadStarted) return;
+    reloadStarted = true;
     try { sessionStorage.setItem(successKey, '1'); } catch (_) {}
     window.location.reload();
   }
@@ -45,31 +59,62 @@
     });
     button.addEventListener('click', () => {
       if (applying) return;
-      if (!registration?.waiting && !controllerChanged) return;
+      const worker = registration?.waiting;
+      if (!worker && !controllerChanged) {
+        dialog.querySelector('[data-update-message]').textContent = 'ไม่พบเวอร์ชันที่รออัปเดต กรุณาปิดและเปิดแอปใหม่';
+        return;
+      }
       applying = true;
+      targetWorker = worker;
       button.hidden = true;
       cancelButton.hidden = true;
       dialog.querySelector('[data-update-message]').textContent = 'กรุณารอสักครู่ กำลังอัปเดต';
       dialog.querySelector('[data-update-progress]').hidden = false;
-      if (registration?.waiting) {
+      if (worker) {
+        const finishIfControlled = () => {
+          if (applying && navigator.serviceWorker.controller === worker) {
+            clearTimeout(failureTimer);
+            reloadUpdatedApp();
+          }
+        };
+        worker.addEventListener('statechange', finishIfControlled);
         failureTimer = setTimeout(() => {
+          if (navigator.serviceWorker.controller === worker) return reloadUpdatedApp();
           applying = false;
           if (!dialog) return;
-          dialog.querySelector('[data-update-message]').textContent = 'อัปเดตไม่สำเร็จ กรุณาลองอีกครั้ง';
+          dialog.querySelector('[data-update-message]').textContent = 'ยังสลับเวอร์ชันไม่สำเร็จ กรุณาปิดแท็บและแอปทั้งหมด แล้วเปิดแอปใหม่';
           dialog.querySelector('[data-update-progress]').hidden = true;
           button.hidden = false;
           cancelButton.hidden = false;
-        }, 20000);
-        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }, 45000);
+        worker.postMessage({ type: 'SKIP_WAITING' });
+        finishIfControlled();
       } else reloadUpdatedApp();
     });
     document.body.appendChild(dialog);
   }
 
-  function markPending() { pending = true; refreshDialog(); }
+  async function markPending() {
+    const worker = registration?.waiting;
+    if (!worker) return;
+    const sequence = ++updateCheckSequence;
+    const version = await getWorkerVersion(worker);
+    if (sequence !== updateCheckSequence || registration?.waiting !== worker) return;
+    if (version && typeof APP_BUILD_VERSION !== 'undefined' && version === APP_BUILD_VERSION) {
+      pending = false;
+      if (dialog && !applying) { dialog.remove(); dialog = null; }
+      return;
+    }
+    if (updateCandidate !== worker) { updateCandidate = worker; dismissedAfterFailure = false; }
+    pending = true;
+    refreshDialog();
+  }
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (applying) { clearTimeout(failureTimer); reloadUpdatedApp(); }
-    else if (hasExistingController || pending) { controllerChanged = true; markPending(); }
+    if (applying && (!targetWorker || navigator.serviceWorker.controller === targetWorker)) { clearTimeout(failureTimer); reloadUpdatedApp(); }
+    else if (!applying && (hasExistingController || pending)) {
+      controllerChanged = true;
+      if (registration?.waiting) markPending();
+    }
   });
   async function checkForUpdate() {
     if (!registration || !navigator.onLine) return;
